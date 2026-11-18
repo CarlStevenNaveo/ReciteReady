@@ -128,17 +128,17 @@ STATIC_URL = 'static/'
 
 
 # Email
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
 
+# Login Settings
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
+# Media Files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
