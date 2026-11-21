@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard | ReciteReady{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge-role-student">
+                    <i class="bi bi-mortarboard-fill me-1"></i> Student Portal
+                </span>
+                <span class="text-muted small">Academic Year 2026-2027</span>
+            </div>
+            <h2 class="fw-bold text-dark mb-0">
+                Welcome back, {% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}!
+            </h2>
+            <p class="text-secondary small mb-0">Track upcoming oral defenses, review instructor rubric evaluations, and improve your presentation skills.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-person"></i> My Profile
+            </a>
+            <a href="{% url 'profile_edit' %}" class="btn btn-primary-custom btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-pencil-square"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 border-0 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Completed Defenses</div>
+                        <h3 class="fw-bold text-dark mt-1 mb-0">{{ stats.completed_recitations }}</h3>
+                    </div>
+                    <span class="p-2 rounded-3 bg-primary-subtle text-primary">
+                        <i class="bi bi-check2-all fs-5"></i>
+                    </span>
+                </div>
+                <div class="small text-muted mt-2">All graded sessions</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 border-0 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Upcoming Recitations</div>
+                        <h3 class="fw-bold text-warning mt-1 mb-0">{{ stats.upcoming_recitations }}</h3>
+                    </div>
+                    <span class="p-2 rounded-3 bg-warning-subtle text-warning">
+                        <i class="bi bi-calendar-event fs-5"></i>
+                    </span>
+                </div>
+                <div class="small text-warning mt-2"><i class="bi bi-clock"></i> Next one scheduled today</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 border-0 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Overall Average</div>
+                        <h3 class="fw-bold text-success mt-1 mb-0">{{ stats.overall_grade }}</h3>
+                    </div>
+                    <span class="p-2 rounded-3 bg-success-subtle text-success">
+                        <i class="bi bi-award-fill fs-5"></i>
+                    </span>
+                </div>
+                <div class="small text-success mt-2"><i class="bi bi-arrow-up-short"></i> Top 10% in class</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 border-0 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Readiness Score</div>
+                        <h3 class="fw-bold text-info mt-1 mb-0">{{ stats.readiness_score }}</h3>
+                    </div>
+                    <span class="p-2 rounded-3 bg-info-subtle text-info">
+                        <i class="bi bi-speedometer2 fs-5"></i>
+                    </span>
+                </div>
+                <div class="small text-muted mt-2">Based on rubric ratings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spotlight: Next Upcoming Recitation -->
+    <div class="card card-custom p-4 border-0 mb-4 bg-white shadow-sm" id="schedule">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="p-2 rounded-3 bg-danger-subtle text-danger">
+                    <i class="bi bi-megaphone-fill fs-5"></i>
+                </span>
+                <div>
+                    <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill small">Upcoming Defense</span>
+                    <h5 class="fw-bold text-dark mb-0">{{ next_recitation.title }}</h5>
+                </div>
+            </div>
+            <span class="badge bg-primary-subtle text-primary fs-6 px-3 py-2 rounded-pill">
+                <i class="bi bi-clock me-1"></i> {{ next_recitation.scheduled_time }}
+            </span>
+        </div>
+
+        <div class="row g-3 bg-light p-3 rounded-3 mb-3 border">
+            <div class="col-md-4">
+                <small class="text-muted d-block">Course & Instructor</small>
+                <span class="fw-semibold text-dark">{{ next_recitation.course }}</span>
+                <div class="small text-secondary">{{ next_recitation.instructor }}</div>
+            </div>
+            <div class="col-md-4">
+                <small class="text-muted d-block">Location / Room</small>
+                <span class="fw-semibold text-dark"><i class="bi bi-geo-alt me-1 text-primary"></i> {{ next_recitation.room }}</span>
+            </div>
+            <div class="col-md-4">
+                <small class="text-muted d-block">Preparation Scope</small>
+                <span class="small text-secondary">{{ next_recitation.guidelines }}</span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-outline-primary btn-sm" onclick="alert('Study guide & topic defense points downloaded!')">
+                <i class="bi bi-download me-1"></i> Download Topic Reviewer
+            </button>
+        </div>
+    </div>
+
+    <!-- Performance History & Rubric Breakdown -->
+    <div class="row g-4" id="scores">
+        <div class="col-lg-8">
+            <div class="card card-custom p-4 border-0 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-journal-check text-primary me-2"></i> Recitation History & Feedback
+                    </h5>
+                    <span class="badge bg-light text-muted border">Term 1</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small text-uppercase">
+                            <tr>
+                                <th>Recitation Topic</th>
+                                <th>Course</th>
+                                <th>Score</th>
+                                <th>Instructor Feedback</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in recitation_history %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ item.title }}</div>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">{{ item.course }}</span></td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success fs-6 fw-bold">
+                                            {{ item.score }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small class="text-secondary fst-italic">"{{ item.feedback }}"</small>
+                                    </td>
+                                    <td><small class="text-muted">{{ item.date }}</small></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Confidence & Speech Tips -->
+            <div class="card card-custom p-4 border-0 mb-4 bg-light">
+                <h6 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-lightbulb text-warning me-2"></i> Oral Defense Tips
+                </h6>
+                <div class="d-flex flex-column gap-3 small text-secondary">
+                    <div class="d-flex gap-2">
+                        <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                        <div><strong>Define terms first:</strong> State the formal definition before providing practical schema examples.</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                        <div><strong>Eye Contact:</strong> Maintain composure and acknowledge all panelists during response.</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <i class="bi bi-check-circle-fill text-success mt-1"></i>
+                        <div><strong>Time Management:</strong> Keep direct explanations under 2 minutes to allow thorough Q&A.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rubric Score Weightage -->
+            <div class="card card-custom p-4 border-0 bg-white">
+                <h6 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-pie-chart-fill text-primary me-2"></i> How You Are Evaluated
+                </h6>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Technical Accuracy</span>
+                        <span class="fw-bold text-primary">40%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 40%"></div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Communication Clarity</span>
+                        <span class="fw-bold text-info">30%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 30%"></div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Defense Reasoning</span>
+                        <span class="fw-bold text-warning">20%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 20%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Composure & Timing</span>
+                        <span class="fw-bold text-success">10%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

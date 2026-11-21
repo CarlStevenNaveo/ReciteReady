@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to ReciteReady | Oral Recitation & Performance Platform{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-5 gy-5">
+        <div class="col-lg-6">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-3">
+                <i class="bi bi-stars me-1"></i> Interactive Academic Evaluation
+            </span>
+            <h1 class="display-4 fw-extrabold text-dark lh-sm mb-3" style="font-weight: 800;">
+                Master Oral Recitations with <span class="text-primary">Confidence</span> & <span class="text-indigo" style="color: #6366f1;">Clarity</span>.
+            </h1>
+            <p class="lead text-secondary mb-4">
+                ReciteReady is the all-in-one platform built for academic institutions to streamline oral recitation scheduling, rubric-based performance assessments, and real-time student feedback.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-4 py-3">
+                    <i class="bi bi-person-plus me-2"></i> Create Your Account
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg px-4 py-3 fw-semibold">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                </a>
+            </div>
+            <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top text-muted small">
+                <div class="d-flex align-items-center gap-1">
+                    <i class="bi bi-check-circle-fill text-success"></i> Role-Based Portals
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                    <i class="bi bi-check-circle-fill text-success"></i> Real-time Grading
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                    <i class="bi bi-check-circle-fill text-success"></i> Instant Feedback
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="position-relative">
+                <div class="card card-custom p-4 shadow-lg border-0 bg-white">
+                    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="p-2 rounded bg-primary text-white">
+                                <i class="bi bi-mic-fill"></i>
+                            </span>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Active Recitation Defense</h6>
+                                <small class="text-muted">CS301 - Information Management 2</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill">
+                            <i class="bi bi-record-fill me-1"></i> Live
+                        </span>
+                    </div>
+
+                    <!-- Mini Preview Cards -->
+                    <div class="bg-light p-3 rounded-3 mb-3 border">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-semibold small">Current Candidate</span>
+                            <span class="badge bg-success-subtle text-success">94/100 Points</span>
+                        </div>
+                        <div class="fw-bold text-dark">Juan Dela Cruz (Student)</div>
+                        <div class="small text-muted">Topic: 3rd Normal Form & Boyce-Codd Normal Form</div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="border rounded p-2 text-center bg-white">
+                                <small class="text-muted d-block">Clarity & Eloquence</small>
+                                <span class="fw-bold text-primary">28/30</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded p-2 text-center bg-white">
+                                <small class="text-muted d-block">Technical Accuracy</small>
+                                <span class="fw-bold text-primary">38/40</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-2 border rounded-2 bg-light small text-secondary">
+                        <i class="bi bi-chat-quote-fill text-primary me-1"></i>
+                        <em>"Demonstrated comprehensive understanding of transitive functional dependencies."</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="py-5 border-top">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark">Tailored for Educators and Students</h2>
+            <p class="text-muted">Explore the purpose-built features for each academic role</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Instructor Feature -->
+            <div class="col-md-6">
+                <div class="card card-custom h-100 p-4 border-0">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="p-3 rounded-3 bg-warning-subtle text-warning-emphasis">
+                            <i class="bi bi-mortarboard-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning-subtle text-warning-emphasis mb-1">For Instructors</span>
+                            <h4 class="fw-bold text-dark mb-0">Instructor Portal</h4>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-4">
+                        Manage your classes, coordinate oral recitation schedules, design rubric grading metrics, and evaluate students with speed and precision.
+                    </p>
+                    <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Structured recitation session scheduler</li>
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Standardized rubric-based scorecards</li>
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Comprehensive class performance analytics</li>
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Role-protected instructor dashboard</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Student Feature -->
+            <div class="col-md-6">
+                <div class="card card-custom h-100 p-4 border-0">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="p-3 rounded-3 bg-info-subtle text-info-emphasis">
+                            <i class="bi bi-person-workspace fs-3"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-info-subtle text-info-emphasis mb-1">For Students</span>
+                            <h4 class="fw-bold text-dark mb-0">Student Portal</h4>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-4">
+                        Never miss a recitation session. Prepare using syllabus prompts, review detailed rubric breakdowns, and track your recitation readiness over time.
+                    </p>
+                    <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Personalized recitation schedule countdown</li>
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Detailed rubric feedback from instructors</li>
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Historical score tracking and progress stats</li>
+                        <li><i class="bi bi-check2 text-primary me-2"></i> Profile customization and defense readiness score</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

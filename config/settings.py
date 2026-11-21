@@ -66,13 +66,55 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # PostgreSQL Database (Supabase)
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
+import sys
+
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
+    }
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+else:
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    if DATABASE_URL:
+        import urllib.parse
+        try:
+            DATABASES = {
+                'default': dj_database_url.parse(
+                    DATABASE_URL,
+                    conn_max_age=600,
+                    ssl_require=True
+                )
+            }
+        except Exception:
+            if '://' in DATABASE_URL and '@' in DATABASE_URL:
+                scheme, rest = DATABASE_URL.split('://', 1)
+                user_pass, host_db = rest.rsplit('@', 1)
+                if ':' in user_pass:
+                    user, password = user_pass.split(':', 1)
+                    safe_url = f"{scheme}://{user}:{urllib.parse.quote(password)}@{host_db}"
+                    DATABASES = {
+                        'default': dj_database_url.parse(
+                            safe_url,
+                            conn_max_age=600,
+                            ssl_require=True
+                        )
+                    }
+                else:
+                    raise
+            else:
+                raise
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password Validation
