@@ -18,7 +18,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()
+]
+
+# CSRF Trusted Origins for production HTTPS
+csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if csrf_origins:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',') if origin.strip()]
 
 
 # Application Definition
@@ -35,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -144,7 +154,21 @@ USE_TZ = True
 
 
 # Static Files
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT.mkdir(parents=True, exist_ok=True)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+] if (BASE_DIR / 'static').exists() else []
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # Email Configuration
