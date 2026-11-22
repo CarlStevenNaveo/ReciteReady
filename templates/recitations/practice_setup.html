@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Configure Practice Session | ReciteReady{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card card-custom border-0 p-4 shadow-sm">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div class="p-3 rounded-circle bg-primary-subtle text-primary d-inline-flex mb-2">
+                        <i class="bi bi-shuffle fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Randomized Practice Mode</h3>
+                    <p class="text-secondary small mb-0">Deck: <strong class="text-dark">{{ deck.title }}</strong> ({{ available_count }} Questions)</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Difficulty Selection -->
+                    <div class="mb-3">
+                        <label for="{{ form.difficulty.id_for_label }}" class="form-label fw-semibold text-dark">
+                            <i class="bi bi-funnel me-1 text-primary"></i> Difficulty Filter
+                        </label>
+                        {{ form.difficulty }}
+                        <div class="form-text small text-muted">Focus on a specific level or mix all questions for real recitation variety.</div>
+                    </div>
+
+                    <!-- Time Limit -->
+                    <div class="mb-3">
+                        <label for="{{ form.time_limit.id_for_label }}" class="form-label fw-semibold text-dark">
+                            <i class="bi bi-stopwatch me-1 text-danger"></i> Countdown Timer per Question
+                        </label>
+                        {{ form.time_limit }}
+                        <div class="form-text small text-muted">Simulate the real pressure of timed classroom recitation.</div>
+                    </div>
+
+                    <!-- Question Count -->
+                    <div class="mb-3">
+                        <label for="{{ form.question_count.id_for_label }}" class="form-label fw-semibold text-dark">
+                            <i class="bi bi-list-check me-1 text-success"></i> Number of Questions
+                        </label>
+                        {{ form.question_count }}
+                        <div class="form-text small text-muted">Up to {{ available_count }} questions available in this deck.</div>
+                    </div>
+
+                    <!-- Randomize Toggle -->
+                    <div class="mb-4 p-3 rounded-3 bg-light border">
+                        <div class="form-check form-switch d-flex align-items-center gap-2">
+                            {{ form.randomize }}
+                            <div>
+                                <label class="form-check-label fw-semibold text-dark" for="{{ form.randomize.id_for_label }}">
+                                    Shuffle Questions Randomly
+                                </label>
+                                <div class="text-muted small">Prevents rote sequence memorization so you answer unpredictably.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary-custom btn-lg py-3 fw-bold">
+                            <i class="bi bi-mic-fill me-2"></i> Begin Recitation Drill
+                        </button>
+                        <a href="{% url 'deck_detail' deck.id %}" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

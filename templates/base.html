@@ -127,29 +127,21 @@
                                 <i class="bi bi-speedometer2 me-1"></i> Dashboard
                             </a>
                         </li>
-                        {% if user.role == 'INSTRUCTOR' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'instructor_dashboard' %}#sessions">
-                                    <i class="bi bi-collection-play me-1"></i> Recitation Sessions
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'instructor_dashboard' %}#grading">
-                                    <i class="bi bi-check2-square me-1"></i> Rubrics & Grading
-                                </a>
-                            </li>
-                        {% elif user.role == 'STUDENT' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'student_dashboard' %}#schedule">
-                                    <i class="bi bi-calendar-event me-1"></i> My Schedule
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'student_dashboard' %}#scores">
-                                    <i class="bi bi-graph-up-arrow me-1"></i> Performance & Scores
-                                </a>
-                            </li>
-                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'deck' in request.resolver_match.url_name or 'question' in request.resolver_match.url_name %}active text-primary fw-bold{% endif %}" href="{% url 'deck_list' %}">
+                                <i class="bi bi-stack me-1"></i> Question Bank
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'analytics' in request.resolver_match.url_name %}active text-primary fw-bold{% endif %}" href="{% url 'analytics_dashboard' %}">
+                                <i class="bi bi-graph-up-arrow me-1"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if 'reminders' in request.resolver_match.url_name %}active text-primary fw-bold{% endif %}" href="{% url 'reminders' %}">
+                                <i class="bi bi-alarm me-1"></i> Reminders
+                            </a>
+                        </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'home' %}#features">Features</a>
@@ -162,6 +154,16 @@
 
                 <div class="d-flex align-items-center gap-3">
                     {% if user.is_authenticated %}
+                        <!-- Notification Bell -->
+                        <a href="{% url 'reminders' %}" class="btn btn-light position-relative rounded-circle p-2 text-secondary" title="Practice Reminders & Alerts">
+                            <i class="bi bi-bell-fill fs-5"></i>
+                            {% if unread_notifications_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">
+                                    {{ unread_notifications_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+
                         <!-- Role Badge -->
                         {% if user.role == 'INSTRUCTOR' %}
                             <span class="badge-role-instructor d-none d-md-inline-block">
@@ -203,6 +205,11 @@
                                 <li>
                                     <a class="dropdown-item py-2" href="{% url 'profile_edit' %}">
                                         <i class="bi bi-pencil-square me-2 text-primary"></i> Edit Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" href="{% url 'account_settings' %}">
+                                        <i class="bi bi-gear me-2 text-secondary"></i> Account Settings
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider my-1"></li>

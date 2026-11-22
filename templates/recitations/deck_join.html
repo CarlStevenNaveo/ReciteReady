@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Join Deck by Share Code | ReciteReady{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card card-custom border-0 p-4 shadow-sm text-center">
+                <div class="p-3 rounded-circle bg-primary-subtle text-primary d-inline-flex mx-auto mb-3">
+                    <i class="bi bi-qr-code fs-2"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-2">Join a Shared Deck</h4>
+                <p class="text-secondary small mb-4">
+                    Enter the unique 8-character share code provided by your classmate or instructor to view and practice their recitation deck.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        {{ form.share_code }}
+                        {% if form.share_code.errors %}
+                            <div class="text-danger small mt-2">{{ form.share_code.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary-custom btn-lg">
+                            <i class="bi bi-search me-1"></i> Find Deck
+                        </button>
+                        <a href="{% url 'deck_list' %}" class="btn btn-outline-secondary">
+                            Back to Library
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

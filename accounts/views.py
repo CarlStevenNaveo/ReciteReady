@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth import login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import UserRegistrationForm, UserLoginForm, UserProfileUpdateForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileUpdateForm, CustomPasswordChangeForm
 from .decorators import role_required
 
 
@@ -161,49 +161,35 @@ def instructor_dashboard_view(request):
 def student_dashboard_view(request):
     """
     Role-specific dashboard for Students:
-    - Upcoming recitation schedules and prompts
-    - Metrics: Completed Recitations, Upcoming Sessions, Overall Average, Readiness Score
-    - Performance history and teacher feedback
+    - Real-time metrics: Completed Defenses, Decks Available, Overall Average, Readiness Score
+    - Spotlight: Active/Next Recitation Deck to practice
+    - Recitation attempt history with scores and timestamps
     """
+    from recitations.models import PracticeSession, Deck
+    from django.db.models import Avg
+
+    user_sessions = PracticeSession.objects.filter(user=request.user, status='COMPLETED')
+    completed_recitations = user_sessions.count()
+    avg_score = user_sessions.aggregate(Avg('score_percentage'))['score_percentage__avg'] or 0.0
+
+    user_decks = Deck.objects.filter(owner=request.user)
+    total_decks = user_decks.count() + Deck.objects.filter(is_public=True).exclude(owner=request.user).count()
+    readiness_score = min(100, int(avg_score * 1.05)) if avg_score > 0 else 0
+
+    recent_sessions = user_sessions.select_related('deck').order_by('-completed_at')[:4]
+    latest_deck = user_decks.first() or Deck.objects.filter(is_public=True).first()
+
     context = {
         'role_title': 'Student Portal',
         'stats': {
-            'completed_recitations': 5,
-            'upcoming_recitations': 1,
-            'overall_grade': '91.2%',
-            'readiness_score': '95%',
+            'completed_recitations': completed_recitations,
+            'upcoming_recitations': total_decks,
+            'overall_grade': f"{round(avg_score, 1)}%",
+            'readiness_score': f"{readiness_score}%",
         },
-        'next_recitation': {
-            'title': 'Database Normalization & 3NF Defense',
-            'course': 'IM2 - Information Management 2',
-            'instructor': 'Prof. Dela Cruz',
-            'scheduled_time': 'Today, 2:00 PM - 3:30 PM',
-            'room': 'Lab 402 / Online Portal',
-            'guidelines': 'Be prepared to explain 1NF, 2NF, 3NF with real-world anomalies.',
-        },
-        'recitation_history': [
-            {
-                'title': 'Relational Schema Design',
-                'course': 'IM2',
-                'score': '92/100',
-                'feedback': 'Excellent explanation of primary and foreign keys.',
-                'date': 'Nov 12, 2026',
-            },
-            {
-                'title': 'SQL DDL & DML Commands',
-                'course': 'IM2',
-                'score': '88/100',
-                'feedback': 'Good grasp of constraints, clarify subquery logic.',
-                'date': 'Nov 05, 2026',
-            },
-            {
-                'title': 'ER Modeling & Cardinality',
-                'course': 'IM2',
-                'score': '94/100',
-                'feedback': 'Clear diagrams and great confidence during defense.',
-                'date': 'Oct 28, 2026',
-            },
-        ]
+        'latest_deck': latest_deck,
+        'recent_sessions': recent_sessions,
+        'has_activity': completed_recitations > 0,
     }
     return render(request, 'accounts/student_dashboard.html', context)
 
@@ -243,3 +229,47 @@ def profile_edit_view(request):
     return render(request, 'accounts/profile_edit.html', {
         'form': form
     })
+
+
+@login_required
+def account_settings_view(request):
+    """
+    Account Management: View account settings, change password, and account options.
+    """
+    password_form = CustomPasswordChangeForm(user=request.user)
+    return render(request, 'accounts/account_settings.html', {
+        'password_form': password_form,
+    })
+
+
+@login_required
+def change_password_view(request):
+    """
+    Account Management: Handles password update securely.
+    """
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your password has been changed successfully!")
+            return redirect('account_settings')
+        else:
+            messages.error(request, "Please correct the errors in the password form.")
+            return render(request, 'accounts/account_settings.html', {'password_form': form})
+    return redirect('account_settings')
+
+
+@login_required
+def deactivate_account_view(request):
+    """
+    Account Management: Deactivates student account upon confirmation.
+    """
+    if request.method == 'POST':
+        user = request.user
+        user.is_active = False
+        user.save()
+        auth_logout(request)
+        messages.info(request, "Your account has been deactivated. Contact administration if you wish to reactivate.")
+        return redirect('home')
+    return render(request, 'accounts/account_deactivate_confirm.html')

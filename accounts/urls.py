@@ -11,4 +11,7 @@ urlpatterns = [
     path('dashboard/student/', views.student_dashboard_view, name='student_dashboard'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.profile_edit_view, name='profile_edit'),
+    path('account/settings/', views.account_settings_view, name='account_settings'),
+    path('account/password/', views.change_password_view, name='change_password'),
+    path('account/deactivate/', views.deactivate_account_view, name='deactivate_account'),
 ]

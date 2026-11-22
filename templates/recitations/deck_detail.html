@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ deck.title }} | ReciteReady{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Back breadcrumb & actions -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <a href="{% url 'deck_list' %}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Back to Question Bank
+        </a>
+
+        <div class="d-flex gap-2">
+            {% if is_owner %}
+                <a href="{% url 'deck_edit' deck.id %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-pencil me-1"></i> Edit Deck
+                </a>
+                <a href="{% url 'deck_delete' deck.id %}" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </a>
+            {% else %}
+                <a href="{% url 'deck_clone' deck.id %}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-copy me-1"></i> Clone to My Library
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Deck Hero Banner -->
+    <div class="card card-custom border-0 p-4 mb-4 bg-white shadow-sm">
+        <div class="row align-items-center gy-3">
+            <div class="col-lg-8">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                    <span class="badge {% if deck.is_public %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %} rounded-pill px-2 py-1">
+                        {% if deck.is_public %}<i class="bi bi-globe me-1"></i> Public Deck{% else %}<i class="bi bi-lock me-1"></i> Private Deck{% endif %}
+                    </span>
+                    {% if deck.subject %}
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1">
+                            <i class="bi bi-book me-1"></i> {{ deck.subject }}
+                        </span>
+                    {% endif %}
+                    <span class="text-muted small">Created by {{ deck.owner.get_full_name|default:deck.owner.username }}</span>
+                </div>
+
+                <h2 class="fw-bold text-dark mb-2">{{ deck.title }}</h2>
+                <p class="text-secondary mb-3">{{ deck.description|default:"No description provided for this question deck." }}</p>
+
+                <!-- Difficulty Counts -->
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="badge bg-light text-dark border px-3 py-2">
+                        <strong class="text-primary">{{ deck.question_count }}</strong> Total Questions
+                    </span>
+                    <span class="badge bg-success-subtle text-success px-3 py-2">
+                        {{ deck.easy_count }} Easy
+                    </span>
+                    <span class="badge bg-warning-subtle text-warning-emphasis px-3 py-2">
+                        {{ deck.medium_count }} Medium
+                    </span>
+                    <span class="badge bg-danger-subtle text-danger px-3 py-2">
+                        {{ deck.hard_count }} Hard
+                    </span>
+                </div>
+            </div>
+
+            <!-- Share & Practice Actions -->
+            <div class="col-lg-4 text-lg-end">
+                <div class="p-3 bg-light rounded-3 text-start mb-3 border">
+                    <div class="small fw-semibold text-muted text-uppercase mb-1">Deck Share Code</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <code class="fs-5 fw-bold text-primary">{{ deck.share_code }}</code>
+                        <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" onclick="navigator.clipboard.writeText('{{ deck.share_code }}'); alert('Share code copied: {{ deck.share_code }}');">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    <div class="text-muted small mt-1">Classmates can join with this code.</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'practice_setup' deck.id %}" class="btn btn-primary-custom btn-lg d-flex align-items-center justify-content-center gap-2 {% if deck.question_count == 0 %}disabled{% endif %}">
+                        <i class="bi bi-play-circle-fill fs-5"></i> Start Random Practice
+                    </a>
+                    {% if is_owner %}
+                        <a href="{% url 'question_create' deck.id %}" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-1">
+                            <i class="bi bi-plus-circle"></i> Add Question to Deck
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions in Deck -->
+    <div class="card card-custom border-0 p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-question-square-fill text-primary"></i> Questions in this Deck
+                <span class="badge bg-secondary-subtle text-secondary fs-6">{{ questions.count }}</span>
+            </h4>
+            {% if is_owner %}
+                <a href="{% url 'question_create' deck.id %}" class="btn btn-primary-custom btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Add Question
+                </a>
+            {% endif %}
+        </div>
+
+        {% if questions %}
+            <div class="list-group list-group-flush">
+                {% for q in questions %}
+                    <div class="list-group-item py-3 px-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-secondary text-white rounded-circle px-2 py-1 small fw-bold">#{{ forloop.counter }}</span>
+                                <span class="badge {% if q.difficulty == 'EASY' %}bg-success-subtle text-success{% elif q.difficulty == 'HARD' %}bg-danger-subtle text-danger{% else %}bg-warning-subtle text-warning-emphasis{% endif %} rounded-pill px-2 py-1 small fw-semibold">
+                                    {{ q.get_difficulty_display }}
+                                </span>
+                                {% for tag in q.tag_list %}
+                                    <span class="badge bg-light text-muted border small">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+
+                            {% if is_owner %}
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                        <li>
+                                            <a class="dropdown-item small" href="{% url 'question_edit' q.id %}">
+                                                <i class="bi bi-pencil me-2 text-primary"></i> Edit Question
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item small text-danger" href="{% url 'question_delete' q.id %}">
+                                                <i class="bi bi-trash me-2"></i> Delete Question
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="fw-semibold text-dark fs-6 mb-2">{{ q.prompt }}</div>
+
+                        <!-- Expected Answer Accordion/Toggle -->
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="small fw-bold text-muted text-uppercase mb-1">Expected Answer / Key Points</div>
+                            <div class="small text-secondary" style="white-space: pre-line;">{{ q.expected_answer }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="p-5 text-center">
+                <div class="display-6 text-muted mb-3"><i class="bi bi-journal-plus"></i></div>
+                <h5 class="fw-bold text-dark">This deck has no questions yet</h5>
+                <p class="text-muted small mb-3">Add recitation prompts with expected answers and difficulty tags to start practicing randomly.</p>
+                {% if is_owner %}
+                    <a href="{% url 'question_create' deck.id %}" class="btn btn-primary-custom btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Add First Question
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

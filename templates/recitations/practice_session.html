@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+
+{% block title %}Question {{ current_number }} of {{ total_in_session }} | ReciteReady Practice{% endblock %}
+
+{% block extra_css %}
+<style>
+    .timer-ring {
+        transition: stroke-dashoffset 1s linear;
+    }
+    .recording-pulse {
+        animation: pulse-red 1.5s infinite;
+    }
+    @keyframes pulse-red {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .question-prompt {
+        font-size: 1.35rem;
+        font-weight: 700;
+        line-height: 1.5;
+        color: #0f172a;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <!-- Progress Bar & Session Header -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-bold text-muted text-uppercase">
+                    <i class="bi bi-shuffle text-primary me-1"></i> {{ practice_session.deck.title }}
+                </span>
+                <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-1 rounded-pill">
+                    Question {{ current_number }} of {{ total_in_session }}
+                </span>
+            </div>
+
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: {{ progress_percent }}%;" aria-valuenow="{{ progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+
+            <!-- Main Question Card -->
+            <div class="card card-custom border-0 p-4 p-md-5 mb-4 shadow-sm bg-white">
+                <!-- Top metadata row: Difficulty & Countdown Timer -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge {% if question.difficulty == 'EASY' %}bg-success-subtle text-success{% elif question.difficulty == 'HARD' %}bg-danger-subtle text-danger{% else %}bg-warning-subtle text-warning-emphasis{% endif %} rounded-pill px-3 py-2 fw-semibold">
+                            <i class="bi bi-bar-chart-fill me-1"></i> {{ question.get_difficulty_display }}
+                        </span>
+                        {% for tag in question.tag_list %}
+                            <span class="badge bg-light text-muted border px-2 py-1">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Countdown Timer Widget -->
+                    {% if time_limit > 0 %}
+                        <div class="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-pill border" id="timerBox">
+                            <i class="bi bi-stopwatch text-danger fs-5" id="timerIcon"></i>
+                            <span class="fw-bold font-monospace fs-5 text-dark" id="timerDisplay">{{ time_limit }}s</span>
+                            <span class="text-muted small" id="timerLabel">remaining</span>
+                        </div>
+                    {% else %}
+                        <div class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill">
+                            <i class="bi bi-clock me-1"></i> Untimed Practice
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Recitation Question Prompt -->
+                <div class="mb-4">
+                    <div class="text-uppercase small fw-bold text-muted mb-2">Recitation Prompt:</div>
+                    <div class="question-prompt mb-3">
+                        {{ question.prompt }}
+                    </div>
+                </div>
+
+                <!-- Interactive Voice & Spoken Recitation Section -->
+                <div class="p-3 bg-light rounded-3 border mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="fw-semibold text-dark small mb-0 d-flex align-items-center gap-1">
+                            <i class="bi bi-mic-fill text-primary"></i> Your Recitation Answer (Spoken or Typed)
+                        </label>
+                        <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1" id="micBtn" onclick="toggleSpeechRecognition()">
+                            <i class="bi bi-mic" id="micIcon"></i> <span id="micText">Speak Answer</span>
+                        </button>
+                    </div>
+
+                    <textarea id="userAnswerInput" class="form-control" rows="3" placeholder="Speak your answer using the microphone, or type key points here to practice your oral defense..."></textarea>
+                    <div class="small text-muted mt-1" id="speechStatus">
+                        <i class="bi bi-info-circle me-1"></i> Click "Speak Answer" to transcribe your oral speech directly using browser voice recognition.
+                    </div>
+                </div>
+
+                <!-- Reveal Expected Answer Accordion -->
+                <div class="mb-4 text-center">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2" id="revealBtn" onclick="revealAnswer()">
+                        <i class="bi bi-eye me-1"></i> Reveal Model Answer & Grading Rubric
+                    </button>
+                </div>
+
+                <!-- Expected Answer & Rubric Container (Hidden until revealed or time expires) -->
+                <div id="rubricContainer" style="display: none;">
+                    <div class="p-4 bg-primary-subtle rounded-3 border border-primary-subtle mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-bold">
+                            <i class="bi bi-check-circle-fill"></i> Model Answer & Key Evaluation Criteria:
+                        </div>
+                        <div class="text-dark small" style="white-space: pre-line; line-height: 1.7;">{{ question.expected_answer }}</div>
+                    </div>
+
+                    <!-- Honest Self-Rating Rubric Form -->
+                    <div class="text-center">
+                        <div class="fw-bold text-dark mb-1">Evaluate your Recitation Delivery:</div>
+                        <p class="text-secondary small mb-3">Compare your spoken answer against the model points and rate your performance:</p>
+
+                        <form method="post" action="{% url 'practice_submit_answer' practice_session.id %}" id="answerForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="question_id" value="{{ question.id }}">
+                            <input type="hidden" name="user_answer" id="finalUserAnswer" value="">
+                            <input type="hidden" name="time_spent" id="finalTimeSpent" value="0">
+                            <input type="hidden" name="self_rating" id="finalSelfRating" value="NEEDS_PRACTICE">
+
+                            <div class="row g-2 justify-content-center">
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-outline-success w-100 py-3 fw-bold d-flex flex-column align-items-center gap-1" onclick="submitRating('MASTERED')">
+                                        <i class="bi bi-emoji-smile-fill fs-4 text-success"></i>
+                                        <span>Mastered</span>
+                                        <span class="small fw-normal text-muted">Accurate & Confident (100%)</span>
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-outline-warning w-100 py-3 fw-bold d-flex flex-column align-items-center gap-1" onclick="submitRating('PARTIAL')">
+                                        <i class="bi bi-emoji-neutral-fill fs-4 text-warning"></i>
+                                        <span>Partially Correct</span>
+                                        <span class="small fw-normal text-muted">Got Main Points (50%)</span>
+                                    </button>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-outline-danger w-100 py-3 fw-bold d-flex flex-column align-items-center gap-1" onclick="submitRating('NEEDS_PRACTICE')">
+                                        <i class="bi bi-emoji-frown-fill fs-4 text-danger"></i>
+                                        <span>Needs Practice</span>
+                                        <span class="small fw-normal text-muted">Missed Key Points (0%)</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Controls -->
+            <div class="d-flex justify-content-between align-items-center text-muted small px-2">
+                <span>Random recitation order active</span>
+                <a href="{% url 'practice_results' practice_session.id %}" class="text-danger text-decoration-none" onclick="return confirm('End this practice session early? Current progress will be scored.');">
+                    <i class="bi bi-x-circle me-1"></i> End Practice Early
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let timeLimit = {{ time_limit }};
+    let timeLeft = timeLimit;
+    let timeSpent = 0;
+    let timerInterval = null;
+    let recognition = null;
+    let isRecording = false;
+
+    // Start countdown if timed
+    if (timeLimit > 0) {
+        timerInterval = setInterval(() => {
+            timeSpent++;
+            timeLeft--;
+            const timerDisplay = document.getElementById('timerDisplay');
+            const timerBox = document.getElementById('timerBox');
+
+            if (timerDisplay) {
+                timerDisplay.textContent = timeLeft + 's';
+            }
+
+            if (timeLeft <= 10 && timerBox) {
+                timerBox.classList.remove('bg-light');
+                timerBox.classList.add('bg-danger-subtle', 'border-danger');
+                timerDisplay.classList.add('text-danger');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (timerDisplay) timerDisplay.textContent = 'Time Up!';
+                revealAnswer();
+            }
+        }, 1000);
+    } else {
+        timerInterval = setInterval(() => {
+            timeSpent++;
+        }, 1000);
+    }
+
+    function revealAnswer() {
+        document.getElementById('rubricContainer').style.display = 'block';
+        document.getElementById('revealBtn').style.display = 'none';
+        if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function submitRating(rating) {
+        const userAnswer = document.getElementById('userAnswerInput').value;
+        document.getElementById('finalUserAnswer').value = userAnswer;
+        document.getElementById('finalTimeSpent').value = timeSpent;
+        document.getElementById('finalSelfRating').value = rating;
+        document.getElementById('answerForm').submit();
+    }
+
+    // Web Speech API Integration
+    function initSpeech() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            document.getElementById('speechStatus').innerHTML = '<i class="bi bi-exclamation-triangle text-warning me-1"></i> Voice recognition not supported in this browser. You can type your answers directly.';
+            document.getElementById('micBtn').disabled = true;
+            return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = function() {
+            isRecording = true;
+            document.getElementById('micBtn').classList.add('btn-danger', 'recording-pulse');
+            document.getElementById('micBtn').classList.remove('btn-outline-primary');
+            document.getElementById('micIcon').className = 'bi bi-stop-circle-fill';
+            document.getElementById('micText').textContent = 'Stop Speaking';
+            document.getElementById('speechStatus').innerHTML = '<span class="text-danger fw-semibold"><i class="bi bi-record-circle me-1"></i> Listening to your recitation... speak clearly into your microphone.</span>';
+        };
+
+        recognition.onresult = function(event) {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript + ' ';
+                }
+            }
+            if (finalTranscript) {
+                const textarea = document.getElementById('userAnswerInput');
+                textarea.value = (textarea.value + ' ' + finalTranscript).trim();
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.warn('Speech recognition error:', event.error);
+            stopSpeech();
+        };
+
+        recognition.onend = function() {
+            stopSpeech();
+        };
+    }
+
+    function toggleSpeechRecognition() {
+        if (!recognition) initSpeech();
+        if (!recognition) return;
+
+        if (isRecording) {
+            recognition.stop();
+            stopSpeech();
+        } else {
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }
+
+    function stopSpeech() {
+        isRecording = false;
+        const btn = document.getElementById('micBtn');
+        if (btn) {
+            btn.classList.remove('btn-danger', 'recording-pulse');
+            btn.classList.add('btn-outline-primary');
+            document.getElementById('micIcon').className = 'bi bi-mic';
+            document.getElementById('micText').textContent = 'Speak Answer';
+            document.getElementById('speechStatus').innerHTML = '<i class="bi bi-check2 text-success me-1"></i> Answer recorded. Review your points or reveal the model answer.';
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', initSpeech);
+</script>
+{% endblock %}

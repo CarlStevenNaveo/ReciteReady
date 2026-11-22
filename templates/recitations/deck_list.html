@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Question Bank | ReciteReady{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header with Action Buttons -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 rounded-pill">
+                    <i class="bi bi-stack me-1"></i> Module: Question Bank
+                </span>
+                <span class="text-muted small">Total Questions in Library: {{ total_user_questions }}</span>
+            </div>
+            <h2 class="fw-bold text-dark mb-0">Recitation Question Bank</h2>
+            <p class="text-secondary small mb-0">Organize recitation prompts into decks, add difficulty tags, and share decks with classmates.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'deck_join' %}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-qr-code me-1"></i> Enter Share Code
+            </a>
+            <a href="{% url 'deck_create' %}" class="btn btn-primary-custom btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-plus-circle me-1"></i> Create New Deck
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="card card-custom border-0 p-3 mb-4">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" name="q" value="{{ search_query }}" class="form-control border-start-0" placeholder="Search decks by title, subject, or keywords...">
+                </div>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary-custom w-100">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                {% if search_query %}
+                    <a href="{% url 'deck_list' %}" class="btn btn-outline-secondary">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- My Decks Section -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-folder2-open text-primary"></i> My Personal Decks
+                <span class="badge bg-secondary-subtle text-secondary fs-6">{{ my_decks.count }}</span>
+            </h4>
+        </div>
+
+        {% if my_decks %}
+            <div class="row g-3">
+                {% for deck in my_decks %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-custom border-0 h-100 p-3 d-flex flex-column hover-shadow transition">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge {% if deck.is_public %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %} rounded-pill px-2 py-1 small">
+                                    {% if deck.is_public %}<i class="bi bi-globe me-1"></i> Public{% else %}<i class="bi bi-lock me-1"></i> Private{% endif %}
+                                </span>
+                                <span class="badge bg-light text-dark border font-monospace small" title="Share Code">
+                                    <i class="bi bi-share me-1 text-primary"></i> {{ deck.share_code }}
+                                </span>
+                            </div>
+
+                            <h5 class="fw-bold text-dark mb-1">
+                                <a href="{% url 'deck_detail' deck.id %}" class="text-decoration-none text-dark hover-primary">
+                                    {{ deck.title }}
+                                </a>
+                            </h5>
+                            {% if deck.subject %}
+                                <div class="text-muted small mb-2"><i class="bi bi-book me-1"></i> {{ deck.subject }}</div>
+                            {% endif %}
+                            <p class="text-secondary small flex-grow-1 mb-3">
+                                {{ deck.description|default:"No description provided for this deck."|truncatewords:20 }}
+                            </p>
+
+                            <!-- Question breakdown pills -->
+                            <div class="d-flex gap-1 mb-3">
+                                <span class="badge bg-success-subtle text-success small">{{ deck.easy_count }} Easy</span>
+                                <span class="badge bg-warning-subtle text-warning-emphasis small">{{ deck.medium_count }} Med</span>
+                                <span class="badge bg-danger-subtle text-danger small">{{ deck.hard_count }} Hard</span>
+                                <span class="badge bg-primary-subtle text-primary small ms-auto fw-bold">{{ deck.question_count }} Qs</span>
+                            </div>
+
+                            <!-- Action Footer -->
+                            <div class="d-flex gap-2 pt-2 border-top">
+                                <a href="{% url 'practice_setup' deck.id %}" class="btn btn-primary-custom btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-1 {% if deck.question_count == 0 %}disabled{% endif %}">
+                                    <i class="bi bi-play-circle-fill"></i> Practice Now
+                                </a>
+                                <a href="{% url 'deck_detail' deck.id %}" class="btn btn-outline-secondary btn-sm" title="View Deck Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card card-custom border-0 p-5 text-center bg-white shadow-sm">
+                <div class="display-6 text-muted mb-3"><i class="bi bi-card-list"></i></div>
+                <h5 class="fw-bold text-dark">No Decks Found</h5>
+                <p class="text-muted small mb-3">You haven't created any recitation question decks yet. Create a deck to start building your study prompts.</p>
+                <div>
+                    <a href="{% url 'deck_create' %}" class="btn btn-primary-custom btn-sm px-4">
+                        <i class="bi bi-plus-circle me-1"></i> Create Your First Deck
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Community & Shared Decks Section -->
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-people-fill text-info"></i> Community & Classmate Decks
+                <span class="badge bg-info-subtle text-info fs-6">{{ public_decks.count }}</span>
+            </h4>
+        </div>
+
+        {% if public_decks %}
+            <div class="row g-3">
+                {% for deck in public_decks %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-custom border-0 h-100 p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-info-subtle text-info rounded-pill px-2 py-1 small">
+                                    <i class="bi bi-person me-1"></i> By {{ deck.owner.get_full_name|default:deck.owner.username }}
+                                </span>
+                                <span class="badge bg-light text-dark border font-monospace small">
+                                    {{ deck.share_code }}
+                                </span>
+                            </div>
+
+                            <h5 class="fw-bold text-dark mb-1">
+                                <a href="{% url 'deck_detail' deck.id %}" class="text-decoration-none text-dark hover-primary">
+                                    {{ deck.title }}
+                                </a>
+                            </h5>
+                            {% if deck.subject %}
+                                <div class="text-muted small mb-2"><i class="bi bi-book me-1"></i> {{ deck.subject }}</div>
+                            {% endif %}
+                            <p class="text-secondary small flex-grow-1 mb-3">
+                                {{ deck.description|default:"Shared recitation deck for review."|truncatewords:20 }}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                <span class="text-muted small fw-semibold"><i class="bi bi-question-circle me-1"></i> {{ deck.question_count }} Questions</span>
+                                <div class="d-flex gap-1">
+                                    <a href="{% url 'deck_clone' deck.id %}" class="btn btn-outline-primary btn-sm" title="Clone to My Library">
+                                        <i class="bi bi-copy me-1"></i> Clone
+                                    </a>
+                                    <a href="{% url 'practice_setup' deck.id %}" class="btn btn-primary-custom btn-sm">
+                                        <i class="bi bi-play-fill"></i> Practice
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card card-custom border-0 p-4 text-center bg-white">
+                <p class="text-muted small mb-0">No public shared decks available right now. Share your decks or enter a classmate's code above to study together.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
