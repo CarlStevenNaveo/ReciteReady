@@ -106,7 +106,8 @@ else:
                 user_pass, host_db = rest.rsplit('@', 1)
                 if ':' in user_pass:
                     user, password = user_pass.split(':', 1)
-                    safe_url = f"{scheme}://{user}:{urllib.parse.quote(password)}@{host_db}"
+                    # Quote both user and password to safely handle brackets, hashes, or symbols
+                    safe_url = f"{scheme}://{urllib.parse.quote(user)}:{urllib.parse.quote(password)}@{host_db}"
                     DATABASES = {
                         'default': dj_database_url.parse(
                             safe_url,
