@@ -1,225 +1,171 @@
 {% extends 'base.html' %}
 
-{% block title %}Performance Analytics & Tracking | ReciteReady{% endblock %}
+{% block title %}Performance Tracking & Analytics | recite ready{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 rounded-pill">
-                    <i class="bi bi-graph-up-arrow me-1"></i> Module: Performance Analytics
-                </span>
-                <span class="text-muted small">Tracking Oral Readiness & Attempt History</span>
-            </div>
-            <h2 class="fw-bold text-dark mb-0">Performance Tracking & Dashboard</h2>
-            <p class="text-secondary small mb-0">Review recitation scores, track improvement trends, and target weak question areas.</p>
-        </div>
-        <div>
-            <a href="{% url 'deck_list' %}" class="btn btn-primary-custom btn-sm">
-                <i class="bi bi-play-fill me-1"></i> Start Practice Session
-            </a>
-        </div>
-    </div>
-
-    <!-- Analytics Metric Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Completed Sessions</div>
-                        <h3 class="fw-bold text-dark mt-1 mb-0">{{ total_sessions }}</h3>
+<div class="container py-3">
+    <!-- Screen 5 + Screen 6 Black Curved Header with Floating Circular Readiness Ring -->
+    <div class="lu-card mb-4">
+        <div class="bg-dark p-4 p-md-5">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                <div>
+                    <div class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">
+                        Module: Performance Analytics
                     </div>
-                    <span class="p-2 rounded-3 bg-primary-subtle text-primary">
-                        <i class="bi bi-check2-all fs-5"></i>
-                    </span>
+                    <h2 class="fw-bold text-white mb-0">Performance Tracking &amp; Dashboard</h2>
                 </div>
-                <div class="small text-muted mt-2">{{ total_questions_attempted }} questions practiced</div>
+                <a href="{% url 'deck_list' %}" class="lu-btn-white btn-sm text-decoration-none px-4 py-2">
+                    Start Practice <i class="bi bi-chevron-right ms-1"></i>
+                </a>
             </div>
-        </div>
 
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Overall Average</div>
-                        <h3 class="fw-bold text-success mt-1 mb-0">{{ avg_score }}%</h3>
+            <!-- Floating White Summary Card with Circular Ring (Screen 5) -->
+            <div class="bg-white rounded-4 p-4 shadow">
+                <div class="row align-items-center gy-4">
+                    <div class="col-md-4 text-center">
+                        <div class="lu-ring-wrap">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" stroke="#e5e5e5" stroke-width="7" fill="none"/>
+                                <circle cx="60" cy="60" r="50" stroke="#0a0a0a" stroke-width="7" fill="none"
+                                        stroke-dasharray="314" stroke-dashoffset="{{ readiness_offset }}" stroke-linecap="round"/>
+                            </svg>
+                            <div class="lu-ring-value">{{ readiness_score }}%</div>
+                        </div>
+                        <div class="small fw-semibold text-muted mt-1">Readiness Index</div>
                     </div>
-                    <span class="p-2 rounded-3 bg-success-subtle text-success">
-                        <i class="bi bi-award-fill fs-5"></i>
-                    </span>
-                </div>
-                <div class="small text-success mt-2"><i class="bi bi-arrow-up-right"></i> Across all decks</div>
-            </div>
-        </div>
 
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Readiness Score</div>
-                        <h3 class="fw-bold text-info mt-1 mb-0">{{ readiness_score }}%</h3>
-                    </div>
-                    <span class="p-2 rounded-3 bg-info-subtle text-info">
-                        <i class="bi bi-speedometer2 fs-5"></i>
-                    </span>
-                </div>
-                <div class="small text-muted mt-2">Calculated recitation confidence</div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Mastery Breakdown</div>
-                        <h5 class="fw-bold text-dark mt-2 mb-0">
-                            <span class="text-success">{{ mastered_count }}</span> / 
-                            <span class="text-warning-emphasis">{{ partial_count }}</span> / 
-                            <span class="text-danger">{{ needs_practice_count }}</span>
-                        </h5>
-                    </div>
-                    <span class="p-2 rounded-3 bg-secondary-subtle text-secondary">
-                        <i class="bi bi-pie-chart-fill fs-5"></i>
-                    </span>
-                </div>
-                <div class="small text-muted mt-2">Mastered / Partial / Needs Work</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Weak Areas / Questions to Revisit Section -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-6">
-            <div class="card card-custom border-0 p-4 h-100 shadow-sm bg-white">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                        <i class="bi bi-exclamation-octagon-fill text-danger"></i> Target Weak Areas
-                    </h5>
-                    <span class="badge bg-danger-subtle text-danger small">Needs Practice</span>
-                </div>
-                <p class="text-secondary small mb-3">Questions flagged as 'Needs Practice' during your oral recitations:</p>
-
-                {% if weak_questions %}
-                    <div class="list-group list-group-flush">
-                        {% for item in weak_questions %}
-                            <div class="list-group-item px-0 py-2 border-bottom">
-                                <div class="d-flex justify-content-between align-items-start gap-2">
-                                    <div>
-                                        <div class="small fw-semibold text-dark">{{ item.question__prompt|truncatewords:15 }}</div>
-                                        <div class="text-muted small">
-                                            <span class="badge bg-light text-muted border">{{ item.question__difficulty }}</span>
-                                            Deck: {{ item.question__deck__title }}
-                                        </div>
-                                    </div>
-                                    <span class="badge bg-danger text-white rounded-pill">{{ item.fail_count }}x review</span>
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-6 col-sm-4">
+                                <div class="lu-ink-card p-3 text-center h-100">
+                                    <div class="fs-3 fw-bold font-display text-dark">{{ total_sessions }}</div>
+                                    <div class="small text-muted">Sessions</div>
                                 </div>
                             </div>
-                        {% endfor %}
+                            <div class="col-6 col-sm-4">
+                                <div class="lu-ink-card p-3 text-center h-100">
+                                    <div class="fs-3 fw-bold font-display text-dark">{{ avg_score }}%</div>
+                                    <div class="small text-muted">Avg Score</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="lu-ink-card p-3 text-center h-100">
+                                    <div class="fs-3 fw-bold font-display text-dark">{{ total_questions_attempted }}</div>
+                                    <div class="small text-muted">Attempts</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                {% else %}
-                    <div class="p-4 text-center text-muted small bg-light rounded-3">
-                        <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>
-                        No weak spots identified! Keep practicing to maintain high mastery.
-                    </div>
-                {% endif %}
+                </div>
             </div>
         </div>
 
-        <!-- Mastery Visual Summary -->
-        <div class="col-lg-6">
-            <div class="card card-custom border-0 p-4 h-100 shadow-sm bg-white">
-                <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-bar-chart-line-fill text-primary"></i> Practice Accuracy Ratio
-                </h5>
-                <p class="text-secondary small mb-3">Distribution of your recitation evaluations:</p>
+        <!-- Lower White Content: Accuracy Progress Bars (Screen 6) + Target Weak Areas -->
+        <div class="p-4 p-md-5">
+            <div class="row g-4 mb-5">
+                <!-- Mastery Ratio -->
+                <div class="col-lg-6">
+                    <h5 class="fw-bold text-dark mb-1">Practice Accuracy Ratio</h5>
+                    <p class="text-secondary small mb-3">Distribution of your recitation self-evaluations:</p>
 
-                {% if total_questions_attempted > 0 %}
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between small fw-semibold mb-1">
-                            <span>Mastered (Full Credit)</span>
-                            <span class="text-success">{{ mastered_count }} attempts</span>
-                        </div>
-                        <div class="progress mb-3" style="height: 10px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: {% widthratio mastered_count total_questions_attempted 100 %}%;"></div>
-                        </div>
+                    {% if total_questions_attempted > 0 %}
+                        <div class="d-flex flex-column gap-3">
+                            <div class="lu-ink-card p-3">
+                                <div class="d-flex justify-content-between small fw-bold mb-2">
+                                    <span>Mastered (Full Credit)</span>
+                                    <span>{{ mastered_count }} attempts</span>
+                                </div>
+                                <div class="lu-progress">
+                                    <div class="progress-bar" style="width: {% widthratio mastered_count total_questions_attempted 100 %}%;"></div>
+                                </div>
+                            </div>
 
-                        <div class="d-flex justify-content-between small fw-semibold mb-1">
-                            <span>Partially Correct</span>
-                            <span class="text-warning-emphasis">{{ partial_count }} attempts</span>
-                        </div>
-                        <div class="progress mb-3" style="height: 10px;">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: {% widthratio partial_count total_questions_attempted 100 %}%;"></div>
-                        </div>
+                            <div class="lu-ink-card p-3">
+                                <div class="d-flex justify-content-between small fw-bold mb-2">
+                                    <span>Partially Correct</span>
+                                    <span>{{ partial_count }} attempts</span>
+                                </div>
+                                <div class="lu-progress">
+                                    <div class="progress-bar" style="width: {% widthratio partial_count total_questions_attempted 100 %}%; background: #525252;"></div>
+                                </div>
+                            </div>
 
-                        <div class="d-flex justify-content-between small fw-semibold mb-1">
-                            <span>Needs Practice</span>
-                            <span class="text-danger">{{ needs_practice_count }} attempts</span>
+                            <div class="lu-ink-card p-3">
+                                <div class="d-flex justify-content-between small fw-bold mb-2">
+                                    <span>Needs Practice</span>
+                                    <span>{{ needs_practice_count }} attempts</span>
+                                </div>
+                                <div class="lu-progress">
+                                    <div class="progress-bar" style="width: {% widthratio needs_practice_count total_questions_attempted 100 %}%; background: #a3a3a3;"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="progress" style="height: 10px;">
-                            <div class="progress-bar bg-danger" role="progressbar" style="width: {% widthratio needs_practice_count total_questions_attempted 100 %}%;"></div>
+                    {% else %}
+                        <div class="p-4 text-center rounded-4 bg-light border small text-secondary">
+                            <i class="bi bi-hourglass-split fs-3 d-block mb-2 text-dark"></i>
+                            Complete a randomized practice drill to populate your accuracy metrics.
                         </div>
+                    {% endif %}
+                </div>
+
+                <!-- Weak Areas -->
+                <div class="col-lg-6">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h5 class="fw-bold text-dark mb-0">Target Weak Areas</h5>
+                        <span class="lu-pill-outline" style="font-size: 0.72rem;">Needs Practice</span>
                     </div>
-                {% else %}
-                    <div class="p-4 text-center text-muted small bg-light rounded-3">
-                        <i class="bi bi-hourglass-split fs-3 d-block mb-2 text-primary"></i>
-                        Start a randomized practice drill to populate your accuracy metrics.
-                    </div>
-                {% endif %}
+                    <p class="text-secondary small mb-3">Questions you flagged to revisit:</p>
+
+                    {% if weak_questions %}
+                        <div class="d-flex flex-column gap-2">
+                            {% for item in weak_questions %}
+                                <a href="{% url 'practice_setup' item.question__deck__id %}" class="lu-list-row py-2 px-3">
+                                    <div>
+                                        <div class="fw-bold small text-dark">{{ item.question__prompt|truncatewords:14 }}</div>
+                                        <div class="text-muted" style="font-size: 0.76rem;">
+                                            {{ item.question__difficulty }} &bull; {{ item.question__deck__title }} &bull; Flagged {{ item.fail_count }}x
+                                        </div>
+                                    </div>
+                                    <span class="lu-play-circle"><i class="bi bi-play-fill"></i></span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="p-4 text-center rounded-4 bg-light border small text-secondary">
+                            <i class="bi bi-check-circle-fill fs-3 d-block mb-2 text-dark"></i>
+                            No weak areas detected! Keep practicing consistently.
+                        </div>
+                    {% endif %}
+                </div>
             </div>
+
+            <!-- Attempt History List (Screen 3 / Screen 5 Rows) -->
+            <h5 class="fw-bold text-dark mb-3">Recitation Attempt History</h5>
+            {% if recent_history %}
+                <div class="d-flex flex-column gap-2">
+                    {% for s in recent_history %}
+                        <a href="{% url 'practice_results' s.id %}" class="lu-list-row">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="lu-square-tile-sm" style="width: 44px; height: 44px; font-size: 0.88rem; font-family: 'Jost', sans-serif; font-weight: 700;">
+                                    {{ s.score_percentage|floatformat:0 }}%
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ s.deck.title }}</div>
+                                    <div class="small text-muted">
+                                        {{ s.completed_at|date:"M d, Y · h:i A" }} &bull; {{ s.difficulty_filter|default:"ALL" }} &bull; {{ s.mastered_count }}/{{ s.completed_questions }} Mastered
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="lu-play-circle"><i class="bi bi-play-fill"></i></span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="p-4 text-center rounded-4 bg-light border small text-secondary">
+                    No attempt history recorded yet.
+                </div>
+            {% endif %}
         </div>
-    </div>
-
-    <!-- Attempt History Log Table -->
-    <div class="card card-custom border-0 p-4 shadow-sm bg-white">
-        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-            <i class="bi bi-clock-history text-primary"></i> Recitation Attempt History
-        </h5>
-
-        {% if recent_history %}
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr class="small text-uppercase text-muted">
-                            <th>Session Date</th>
-                            <th>Question Deck</th>
-                            <th>Difficulty Filter</th>
-                            <th>Score</th>
-                            <th>Mastered / Total</th>
-                            <th class="text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for s in recent_history %}
-                            <tr>
-                                <td class="small">{{ s.completed_at|date:"M d, Y - h:i A" }}</td>
-                                <td class="fw-semibold text-dark">{{ s.deck.title }}</td>
-                                <td>
-                                    <span class="badge bg-secondary-subtle text-secondary small">{{ s.difficulty_filter|default:"ALL" }}</span>
-                                </td>
-                                <td>
-                                    <span class="badge {% if s.score_percentage >= 80 %}bg-success-subtle text-success{% elif s.score_percentage >= 60 %}bg-warning-subtle text-warning-emphasis{% else %}bg-danger-subtle text-danger{% endif %} fw-bold px-2 py-1">
-                                        {{ s.score_percentage }}%
-                                    </span>
-                                </td>
-                                <td class="small text-muted">{{ s.mastered_count }} / {{ s.completed_questions }} Qs</td>
-                                <td class="text-end">
-                                    <a href="{% url 'practice_results' s.id %}" class="btn btn-outline-secondary btn-sm">
-                                        <i class="bi bi-eye"></i> Details
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="p-4 text-center text-muted small">
-                No recitation history recorded yet. Complete your first practice drill to view historical trends.
-            </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

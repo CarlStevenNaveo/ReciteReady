@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Deactivate Account | ReciteReady{% endblock %}
+{% block title %}Deactivate Account | recite ready{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="card card-custom border-0 p-4 shadow-sm text-center">
-                <div class="p-3 rounded-circle bg-danger-subtle text-danger d-inline-flex mx-auto mb-3">
-                    <i class="bi bi-person-slash fs-2"></i>
+            <div class="lu-card p-4 p-md-5 text-center">
+                <div class="lu-square-tile mx-auto mb-3">
+                    <i class="bi bi-person-slash"></i>
                 </div>
                 <h4 class="fw-bold text-dark mb-2">Deactivate Your Account?</h4>
                 <p class="text-secondary small mb-4">
-                    Are you sure you want to deactivate your ReciteReady account (<strong>{{ user.username }}</strong>)?
-                    You will be logged out immediately. You can contact administration if you need to reactivate your account in the future.
+                    Are you sure you want to deactivate <strong>{{ user.username }}</strong>?
+                    You will be logged out immediately. Contact administration if you need to reactivate later.
                 </p>
 
-                <form method="post" class="d-flex justify-content-center gap-2">
+                <form method="post" class="d-grid gap-2">
                     {% csrf_token %}
-                    <a href="{% url 'account_settings' %}" class="btn btn-outline-secondary px-4">Cancel</a>
-                    <button type="submit" class="btn btn-danger px-4">Yes, Deactivate Account</button>
+                    <button type="submit" class="lu-btn-black py-2">Yes, Deactivate Account</button>
+                    <a href="{% url 'account_settings' %}" class="lu-btn-outline text-decoration-none py-2">Cancel</a>
                 </form>
             </div>
         </div>

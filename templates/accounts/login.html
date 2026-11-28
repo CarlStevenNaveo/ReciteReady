@@ -1,86 +1,110 @@
 {% extends 'base.html' %}
 
-{% block title %}Sign In | ReciteReady{% endblock %}
+{% block title %}Log In | recite ready{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lu-auth-card {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid rgba(10, 10, 10, 0.08);
+        box-shadow: 0 22px 54px rgba(0, 0, 0, 0.09);
+        overflow: hidden;
+        position: relative;
+    }
+    .lu-auth-wave-top {
+        width: 100%;
+        height: 128px;
+        display: block;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<div class="container py-4 py-md-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card card-custom p-4 p-md-5 border-0 shadow-sm">
-                <div class="text-center mb-4">
-                    <span class="p-3 rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center mb-3">
-                        <i class="bi bi-box-arrow-in-right fs-3"></i>
-                    </span>
-                    <h2 class="fw-bold text-dark">Welcome Back</h2>
-                    <p class="text-muted">Sign in to your ReciteReady portal</p>
-                </div>
+        <div class="col-md-7 col-lg-5">
+            <div class="lu-auth-card">
+                <!-- Screen 2 Signature Fluid Black Wave Top -->
+                <svg class="lu-auth-wave-top" viewBox="0 0 440 130" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M0 0H390C345 18 330 48 310 62C285 80 245 55 205 64C155 75 130 112 75 112C35 112 18 118 0 124V0Z" fill="#0a0a0a"/>
+                    <path d="M402 0C362 24 352 58 326 75C296 95 254 68 214 78C164 90 135 124 76 124C38 124 18 127 0 130" stroke="#0a0a0a" stroke-width="1.5"/>
+                </svg>
 
-                {% if next %}
-                    <div class="alert alert-warning border-0 small d-flex align-items-center gap-2 mb-4" role="alert">
-                        <i class="bi bi-shield-exclamation text-warning fs-5"></i>
-                        <div>Please sign in to access that page.</div>
+                <div class="px-4 px-md-5 pb-5 pt-2">
+                    <!-- Centered Brand Emblem (Screen 2) -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-dark text-white fw-bold mb-2" style="width: 44px; height: 44px; font-family: 'Jost', sans-serif; font-size: 1.1rem; letter-spacing: -1px;">
+                            [ ]
+                        </div>
+                        <h2 class="fw-bold text-dark mb-1">recite ready</h2>
+                        <p class="text-muted small mb-0">Log in to access your decks and practice drills</p>
                     </div>
-                {% endif %}
 
-                <!-- Login Form -->
-                <form method="post" novalidate>
-                    {% csrf_token %}
                     {% if next %}
-                        <input type="hidden" name="next" value="{{ next }}">
-                    {% endif %}
-
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger alert-dismissible fade show mb-4 border-0" role="alert">
-                            {% for error in form.non_field_errors %}
-                                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
-                            {% endfor %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <div class="alert lu-alert small d-flex align-items-center gap-2 mb-4 py-2 px-3" role="alert">
+                            <i class="bi bi-lock-fill"></i>
+                            <div>Please sign in to access that page.</div>
                         </div>
                     {% endif %}
 
-                    <!-- Username / Email -->
-                    <div class="mb-3">
-                        <label for="{{ form.username_or_email.id_for_label }}" class="form-label fw-semibold text-dark">
-                            Username or Email <span class="text-danger">*</span>
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
-                            {{ form.username_or_email }}
-                        </div>
-                        {% if form.username_or_email.errors %}
-                            <div class="text-danger small mt-1">{{ form.username_or_email.errors|striptags }}</div>
+                    <!-- Login Form -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% if next %}
+                            <input type="hidden" name="next" value="{{ next }}">
                         {% endif %}
-                    </div>
 
-                    <!-- Password -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label for="id_password" class="form-label fw-semibold text-dark mb-0">
-                                Password <span class="text-danger">*</span>
+                        {% if form.non_field_errors %}
+                            <div class="alert lu-alert alert-dismissible fade show mb-4 py-2 px-3 small" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-octagon-fill me-1"></i> {{ error }}</div>
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <!-- Username / Email -->
+                        <div class="mb-3">
+                            <label for="{{ form.username_or_email.id_for_label }}" class="form-label fw-semibold small text-dark">
+                                Username or Email
                             </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                {{ form.username_or_email }}
+                            </div>
+                            {% if form.username_or_email.errors %}
+                                <div class="text-danger small mt-1">{{ form.username_or_email.errors|striptags }}</div>
+                            {% endif %}
                         </div>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="bi bi-shield-lock"></i></span>
-                            {{ form.password }}
-                            <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
-                                <i class="bi bi-eye"></i>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label fw-semibold small text-dark">
+                                Password
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                                {{ form.password }}
+                                <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword" style="border-radius: 0 12px 12px 0;">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Screen 2 Stacked Primary Black + Outlined White Buttons -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="lu-btn-black py-3 fs-6">
+                                Log In
                             </button>
+                            <a href="{% url 'register' %}" class="lu-btn-outline text-center text-decoration-none py-3 fs-6">
+                                Sign Up
+                            </a>
                         </div>
-                        {% if form.password.errors %}
-                            <div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>
-                        {% endif %}
-                    </div>
-
-                    <button type="submit" class="btn btn-primary-custom btn-lg w-100 py-3 shadow-sm">
-                        <i class="bi bi-box-arrow-in-right me-2"></i> Sign In to Portal
-                    </button>
-                </form>
-
-                <div class="text-center mt-4 pt-3 border-top">
-                    <p class="text-muted mb-0">
-                        Don't have an account yet?
-                        <a href="{% url 'register' %}" class="fw-bold text-primary text-decoration-none">Register here</a>
-                    </p>
+                    </form>
                 </div>
             </div>
         </div>

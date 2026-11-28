@@ -1,191 +1,256 @@
 {% extends 'base.html' %}
 
-{% block title %}Student Dashboard | ReciteReady{% endblock %}
+{% block title %}Student Dashboard | recite ready{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Welcome Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge-role-student">
-                    <i class="bi bi-mortarboard-fill me-1"></i> Student Portal
-                </span>
-                <span class="text-muted small">Oral Recitation Readiness Platform</span>
-            </div>
-            <h2 class="fw-bold text-dark mb-0">
-                Welcome back, {% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}!
-            </h2>
-            <p class="text-secondary small mb-0">Practice randomized recitation drills, build answer confidence, and track your progress.</p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{% url 'deck_list' %}" class="btn btn-primary-custom btn-sm d-flex align-items-center gap-1">
-                <i class="bi bi-stack"></i> Question Bank
-            </a>
-            <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
-                <i class="bi bi-person"></i> My Profile
-            </a>
-        </div>
-    </div>
-
-    <!-- Quick Stats Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Completed Drills</div>
-                        <h3 class="fw-bold text-dark mt-1 mb-0">{{ stats.completed_recitations }}</h3>
+<div class="container py-3">
+    <!-- Screen 3 + Screen 6 Black Curved Hero Header with Search Bar -->
+    <div class="lu-card mb-4">
+        <div class="lu-dark-curved-top p-4 p-md-5 pb-5">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-7">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" alt="{{ user.username }}" class="avatar-circle" style="width: 56px; height: 56px;">
+                        {% else %}
+                            <div class="avatar-circle" style="width: 56px; height: 56px; font-size: 1.25rem;">
+                                {{ user.first_name|default:user.username|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <div class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">Student Portal</div>
+                            <h2 class="fw-bold text-white mb-0">
+                                Welcome back, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
+                            </h2>
+                        </div>
                     </div>
-                    <span class="p-2 rounded-3 bg-primary-subtle text-primary">
-                        <i class="bi bi-check2-all fs-5"></i>
-                    </span>
+                    <p class="text-white-50 small mb-0" style="max-width: 500px;">
+                        Practice your decks in randomized order, time your oral responses, and track readiness until defense day.
+                    </p>
                 </div>
-                <div class="small text-muted mt-2">All completed sessions</div>
+
+                <!-- Screen 3 White Rounded Search Bar inside Black Header -->
+                <div class="col-lg-5">
+                    <form method="get" action="{% url 'deck_list' %}" class="lu-search-bar">
+                        <input type="text" name="q" class="form-control flex-grow-1" placeholder="Search decks, subjects, topics...">
+                        <button type="submit" class="btn btn-sm bg-dark text-white rounded-3 px-3 py-2" aria-label="Search decks">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Available Decks</div>
-                        <h3 class="fw-bold text-warning mt-1 mb-0">{{ stats.upcoming_recitations }}</h3>
-                    </div>
-                    <span class="p-2 rounded-3 bg-warning-subtle text-warning">
-                        <i class="bi bi-collection fs-5"></i>
-                    </span>
-                </div>
-                <div class="small text-warning mt-2"><i class="bi bi-folder2-open"></i> Question Bank Decks</div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Overall Average</div>
-                        <h3 class="fw-bold text-success mt-1 mb-0">{{ stats.overall_grade }}</h3>
-                    </div>
-                    <span class="p-2 rounded-3 bg-success-subtle text-success">
-                        <i class="bi bi-award-fill fs-5"></i>
-                    </span>
-                </div>
-                <div class="small text-success mt-2"><i class="bi bi-graph-up-arrow"></i> Historical drill mastery</div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-3 border-0 h-100">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-muted small fw-semibold text-uppercase">Readiness Score</div>
-                        <h3 class="fw-bold text-info mt-1 mb-0">{{ stats.readiness_score }}</h3>
-                    </div>
-                    <span class="p-2 rounded-3 bg-info-subtle text-info">
-                        <i class="bi bi-speedometer2 fs-5"></i>
-                    </span>
-                </div>
-                <div class="small text-muted mt-2">Oral recitation readiness</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Spotlight: Practice Now Recommendation -->
-    {% if latest_deck %}
-        <div class="card card-custom p-4 border-0 mb-4 bg-white shadow-sm" id="schedule">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="p-2 rounded-3 bg-primary-subtle text-primary">
-                        <i class="bi bi-mic-fill fs-5"></i>
-                    </span>
-                    <div>
-                        <span class="badge bg-primary-subtle text-primary small">Recommended Practice Deck</span>
-                        <h5 class="fw-bold text-dark mb-0">{{ latest_deck.title }}</h5>
-                    </div>
-                </div>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'deck_detail' latest_deck.id %}" class="btn btn-outline-secondary btn-sm">
-                        View Questions ({{ latest_deck.question_count }})
-                    </a>
-                    <a href="{% url 'practice_setup' latest_deck.id %}" class="btn btn-primary-custom btn-sm d-flex align-items-center gap-1">
-                        <i class="bi bi-play-circle-fill"></i> Start Random Practice
-                    </a>
-                </div>
-            </div>
-            <p class="text-secondary small mb-2">{{ latest_deck.description|default:"Practice questions from this deck to prepare for your upcoming recitation." }}</p>
-            <div class="d-flex gap-2 small">
-                <span class="text-muted"><i class="bi bi-tag me-1"></i> Subject: {{ latest_deck.subject|default:"General" }}</span>
+        <!-- Screen 6 Overlapping White Seam Pill -->
+        <div class="text-center px-3">
+            <div class="lu-seam-pill flex-wrap justify-content-center">
+                <span><i class="bi bi-collection-fill me-1"></i> {{ stats.upcoming_recitations }} Decks Available</span>
                 <span class="text-muted">&bull;</span>
-                <span class="text-muted"><i class="bi bi-share me-1"></i> Code: <code>{{ latest_deck.share_code }}</code></span>
+                <span><i class="bi bi-check2-circle me-1"></i> {{ stats.completed_recitations }} Drills Completed</span>
+                <span class="text-muted">&bull;</span>
+                <span><i class="bi bi-award-fill me-1"></i> {{ stats.overall_grade }} Avg Score</span>
             </div>
-        </div>
-    {% else %}
-        <div class="card card-custom p-4 border-0 mb-4 bg-white shadow-sm text-center">
-            <h5 class="fw-bold text-dark mb-2">Ready to Start Practicing?</h5>
-            <p class="text-secondary small mb-3">Create your first question deck or enter a classmate's share code to start randomized recitation drills.</p>
-            <div class="d-flex justify-content-center gap-2">
-                <a href="{% url 'deck_create' %}" class="btn btn-primary-custom btn-sm">
-                    <i class="bi bi-plus-circle me-1"></i> Create a Deck
-                </a>
-                <a href="{% url 'deck_join' %}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-qr-code me-1"></i> Join Shared Deck
-                </a>
-            </div>
-        </div>
-    {% endif %}
-
-    <!-- Recitation History Section -->
-    <div class="card card-custom border-0 p-4 shadow-sm bg-white" id="scores">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <h5 class="fw-bold text-dark mb-0">Recent Practice Attempt History</h5>
-                <span class="text-secondary small">Evaluated oral answers and performance scores</span>
-            </div>
-            <a href="{% url 'analytics_dashboard' %}" class="btn btn-link text-primary small text-decoration-none fw-semibold">
-                View Full Analytics <i class="bi bi-arrow-right"></i>
-            </a>
         </div>
 
-        {% if recent_sessions %}
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr class="small text-uppercase text-muted">
-                            <th>Date</th>
-                            <th>Deck</th>
-                            <th>Score</th>
-                            <th>Mastered / Completed</th>
-                            <th class="text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <!-- Screen 3: "Recommended for you" Black Square Tiles -->
+        <div class="p-4 p-md-5 pt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark mb-0">Quick Actions</h5>
+                <a href="{% url 'deck_list' %}" class="small fw-semibold text-dark text-decoration-none">View all <i class="bi bi-chevron-right"></i></a>
+            </div>
+            <div class="row g-3 text-center">
+                <div class="col-4 col-sm-2">
+                    <a href="{% url 'deck_list' %}" class="lu-square-tile-wrap">
+                        <div class="lu-square-tile"><i class="bi bi-stack"></i></div>
+                        <span class="lu-tile-label">Question Bank</span>
+                    </a>
+                </div>
+                <div class="col-4 col-sm-2">
+                    <a href="{% url 'deck_create' %}" class="lu-square-tile-wrap">
+                        <div class="lu-square-tile"><i class="bi bi-plus-lg"></i></div>
+                        <span class="lu-tile-label">New Deck</span>
+                    </a>
+                </div>
+                <div class="col-4 col-sm-2">
+                    <a href="{% if latest_deck %}{% url 'practice_setup' latest_deck.id %}{% else %}{% url 'deck_list' %}{% endif %}" class="lu-square-tile-wrap">
+                        <div class="lu-square-tile"><i class="bi bi-shuffle"></i></div>
+                        <span class="lu-tile-label">Random Drill</span>
+                    </a>
+                </div>
+                <div class="col-4 col-sm-2">
+                    <a href="{% url 'deck_join' %}" class="lu-square-tile-wrap">
+                        <div class="lu-square-tile"><i class="bi bi-qr-code"></i></div>
+                        <span class="lu-tile-label">Join Code</span>
+                    </a>
+                </div>
+                <div class="col-4 col-sm-2">
+                    <a href="{% url 'analytics_dashboard' %}" class="lu-square-tile-wrap">
+                        <div class="lu-square-tile"><i class="bi bi-graph-up-arrow"></i></div>
+                        <span class="lu-tile-label">Analytics</span>
+                    </a>
+                </div>
+                <div class="col-4 col-sm-2">
+                    <a href="{% url 'reminders' %}" class="lu-square-tile-wrap">
+                        <div class="lu-square-tile"><i class="bi bi-alarm"></i></div>
+                        <span class="lu-tile-label">Reminders</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Body -->
+    <div class="row g-4">
+        <!-- Left Column: Active Deck (Screen 6 "In progress") + Recent History (Screen 3 "Last seen") -->
+        <div class="col-lg-8">
+            <!-- In Progress / Recommended Deck -->
+            <div class="lu-card p-4 mb-4" id="schedule">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-dark mb-0">Recommended Practice</h5>
+                    {% if latest_deck %}
+                        <span class="lu-pill-soft font-monospace">{{ latest_deck.share_code }}</span>
+                    {% endif %}
+                </div>
+
+                {% if latest_deck %}
+                    <div class="lu-ink-card p-3 p-md-4">
+                        <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3">
+                            <div class="lu-square-tile-sm">
+                                <i class="bi bi-mic-fill"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                    <h5 class="fw-bold text-dark mb-0">{{ latest_deck.title }}</h5>
+                                    <span class="lu-pill-soft" style="font-size: 0.72rem;">{{ latest_deck.question_count }} Questions</span>
+                                </div>
+                                <p class="text-secondary small mb-2">
+                                    {{ latest_deck.description|default:"Practice randomized questions from this deck to boost recitation confidence."|truncatewords:20 }}
+                                </p>
+                                <!-- Sleek Monochrome Progress Bar (Screen 6) -->
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="lu-progress flex-grow-1">
+                                        <div class="progress-bar" style="width: {{ stats.readiness_num }}%;"></div>
+                                    </div>
+                                    <span class="small fw-bold font-display text-dark">{{ stats.readiness_score }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top">
+                            <a href="{% url 'practice_setup' latest_deck.id %}" class="lu-btn-black lu-btn-chevron text-decoration-none btn-sm flex-grow-1 justify-content-between px-3 py-2">
+                                <span>Start Random Practice</span>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                            <a href="{% url 'deck_detail' latest_deck.id %}" class="lu-btn-outline text-decoration-none btn-sm px-3 py-2">
+                                View Deck
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="lu-ink-card p-4 text-center">
+                        <h6 class="fw-bold text-dark mb-1">Ready to start practicing?</h6>
+                        <p class="text-secondary small mb-3">Create your first question deck or join a classmate's deck with a share code.</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{% url 'deck_create' %}" class="lu-btn-black btn-sm text-decoration-none px-3">Create a Deck</a>
+                            <a href="{% url 'deck_join' %}" class="lu-btn-outline btn-sm text-decoration-none px-3">Join Code</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Last Seen / Recent Practice Attempts (Screen 3 Ink-Bordered Rows) -->
+            <div class="lu-card p-4" id="scores">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Recent Recitation Sessions</h5>
+                        <span class="text-muted small">Click any session to review your answers and scoring</span>
+                    </div>
+                    <a href="{% url 'analytics_dashboard' %}" class="small fw-semibold text-dark text-decoration-none">
+                        Full Analytics <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+
+                {% if recent_sessions %}
+                    <div class="d-flex flex-column gap-2">
                         {% for s in recent_sessions %}
-                            <tr>
-                                <td class="small">{{ s.completed_at|date:"M d, Y - h:i A" }}</td>
-                                <td class="fw-semibold text-dark">{{ s.deck.title }}</td>
-                                <td>
-                                    <span class="badge {% if s.score_percentage >= 80 %}bg-success-subtle text-success{% elif s.score_percentage >= 60 %}bg-warning-subtle text-warning-emphasis{% else %}bg-danger-subtle text-danger{% endif %} fw-bold px-2 py-1">
-                                        {{ s.score_percentage }}%
-                                    </span>
-                                </td>
-                                <td class="small text-muted">{{ s.mastered_count }} / {{ s.completed_questions }} Qs</td>
-                                <td class="text-end">
-                                    <a href="{% url 'practice_results' s.id %}" class="btn btn-outline-secondary btn-sm">
-                                        <i class="bi bi-eye"></i> Review
-                                    </a>
-                                </td>
-                            </tr>
+                            <a href="{% url 'practice_results' s.id %}" class="lu-list-row">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="lu-square-tile-sm" style="width: 44px; height: 44px; font-size: 0.9rem; font-family: 'Jost', sans-serif; font-weight: 700;">
+                                        {{ s.score_percentage|floatformat:0 }}%
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ s.deck.title }}</div>
+                                        <div class="small text-muted">
+                                            {{ s.completed_at|date:"M d, Y · h:i A" }} &bull; {{ s.mastered_count }}/{{ s.completed_questions }} Mastered
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="lu-play-circle" title="Review Results">
+                                    <i class="bi bi-play-fill"></i>
+                                </span>
+                            </a>
                         {% endfor %}
-                    </tbody>
-                </table>
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center rounded-4 bg-light border">
+                        <i class="bi bi-journal-check fs-3 d-block mb-2 text-dark"></i>
+                        <div class="small text-secondary">No recitation sessions yet. Launch a random practice drill to log your first attempt.</div>
+                    </div>
+                {% endif %}
             </div>
-        {% else %}
-            <div class="p-4 text-center text-muted small bg-light rounded-3">
-                <i class="bi bi-journal-check fs-3 d-block mb-2 text-primary"></i>
-                No recitation attempts recorded yet. Launch a practice drill to see your evaluation history here.
+        </div>
+
+        <!-- Right Column: Screen 5 Circular Readiness Gauge Card -->
+        <div class="col-lg-4">
+            <div class="lu-card h-100 d-flex flex-column">
+                <div class="bg-dark p-4 text-center">
+                    <div class="bg-white rounded-4 p-4">
+                        <div class="small text-muted fw-semibold text-uppercase mb-2" style="letter-spacing: 0.06em;">
+                            Oral Readiness
+                        </div>
+                        <div class="lu-ring-wrap mb-2">
+                            <svg viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" stroke="#e5e5e5" stroke-width="7" fill="none"/>
+                                <circle cx="60" cy="60" r="50" stroke="#0a0a0a" stroke-width="7" fill="none"
+                                        stroke-dasharray="314" stroke-dashoffset="{{ stats.readiness_offset }}" stroke-linecap="round"/>
+                            </svg>
+                            <div class="lu-ring-value">{{ stats.readiness_score }}</div>
+                        </div>
+                        <div class="small text-secondary">
+                            Based on historical mastery across completed drills
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 4 Side-by-Side Stat Tiles -->
+                <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="lu-ink-card p-3 text-center h-100">
+                                <div class="fs-3 fw-bold font-display text-dark">{{ stats.completed_recitations }}</div>
+                                <div class="small text-muted">Completed Drills</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="lu-ink-card p-3 text-center h-100">
+                                <div class="fs-3 fw-bold font-display text-dark">{{ stats.overall_grade }}</div>
+                                <div class="small text-muted">Average Score</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'analytics_dashboard' %}" class="lu-btn-black lu-btn-chevron text-decoration-none py-2 px-3">
+                            <span>View Weak Areas</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                        <a href="{% url 'profile' %}" class="lu-btn-outline text-center text-decoration-none py-2">
+                            My Profile
+                        </a>
+                    </div>
+                </div>
             </div>
-        {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

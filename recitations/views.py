@@ -427,11 +427,14 @@ def practice_results_view(request, session_id):
     total_time = sum(a.time_spent_seconds for a in attempts)
     avg_time = round(total_time / attempts.count(), 1) if attempts.count() > 0 else 0
 
+    score_offset = round(314 - (314 * practice_session.score_percentage / 100), 1)
+
     context = {
         'session': practice_session,
         'attempts': attempts,
         'total_time': total_time,
         'avg_time': avg_time,
+        'score_offset': score_offset,
     }
     return render(request, 'recitations/practice_results.html', context)
 
@@ -468,6 +471,9 @@ def analytics_dashboard_view(request):
 
     recent_history = sessions.select_related('deck').order_by('-completed_at')[:10]
 
+    readiness_score = min(100, int(avg_score * 1.05)) if avg_score > 0 else 0
+    readiness_offset = round(314 - (314 * readiness_score / 100), 1)
+
     context = {
         'total_sessions': total_sessions,
         'total_questions_attempted': total_questions_attempted,
@@ -475,7 +481,8 @@ def analytics_dashboard_view(request):
         'partial_count': partial_count,
         'needs_practice_count': needs_practice_count,
         'avg_score': round(avg_score, 1),
-        'readiness_score': min(100, int(avg_score * 1.05)) if avg_score > 0 else 0,
+        'readiness_score': readiness_score,
+        'readiness_offset': readiness_offset,
         'weak_questions': weak_attempts,
         'recent_history': recent_history,
     }

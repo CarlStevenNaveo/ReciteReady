@@ -1,136 +1,129 @@
 {% extends 'base.html' %}
 
-{% block title %}Edit Profile | ReciteReady{% endblock %}
+{% block title %}Edit Profile | recite ready{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container py-3 py-md-4">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h3 class="fw-bold text-dark mb-0">Update Profile Details</h3>
-                    <p class="text-muted small mb-0">Modify your personal information and contact settings</p>
+            <div class="lu-card">
+                <div class="lu-dark-curved-top p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">User Management</div>
+                        <h3 class="fw-bold text-white mb-0">Update Profile Details</h3>
+                    </div>
+                    <a href="{% url 'profile' %}" class="lu-btn-white btn-sm text-decoration-none px-3">
+                        <i class="bi bi-x-lg me-1"></i> Cancel
+                    </a>
                 </div>
-                <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-x-lg me-1"></i> Cancel
-                </a>
-            </div>
 
-            <!-- Profile Edit Card -->
-            <div class="card card-custom p-4 p-md-5 border-0 shadow-sm">
-                <form method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
+                <div class="p-4 p-md-5">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger alert-dismissible fade show mb-4 border-0" role="alert">
-                            {% for error in form.non_field_errors %}
-                                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
-                            {% endfor %}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {% if form.non_field_errors %}
+                            <div class="alert lu-alert alert-dismissible fade show mb-4 py-2 px-3 small" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-octagon-fill me-1"></i> {{ error }}</div>
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <!-- Photo Upload with Preview -->
+                        <div class="d-flex flex-column flex-sm-row align-items-center gap-4 mb-4 pb-4 border-bottom">
+                            <div>
+                                {% if user.profile_photo %}
+                                    <img id="avatarPreview" src="{{ user.profile_photo.url }}" alt="{{ user.username }}" class="lu-avatar-lg" style="border-color: #0a0a0a;">
+                                {% else %}
+                                    <div id="avatarFallback" class="lu-avatar-lg">
+                                        {{ user.first_name|default:user.username|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
+                                    </div>
+                                    <img id="avatarPreview" src="" alt="Avatar preview" class="lu-avatar-lg d-none" style="border-color: #0a0a0a;">
+                                {% endif %}
+                            </div>
+
+                            <div class="flex-grow-1 w-100">
+                                <label for="{{ form.profile_photo.id_for_label }}" class="form-label fw-semibold small text-dark">
+                                    Upload New Profile Photo
+                                </label>
+                                {{ form.profile_photo }}
+                                {% if form.profile_photo.errors %}
+                                    <div class="text-danger small mt-1">{{ form.profile_photo.errors|striptags }}</div>
+                                {% else %}
+                                    <small class="text-muted d-block mt-1">Accepts JPG, PNG, WEBP images.</small>
+                                {% endif %}
+                            </div>
                         </div>
-                    {% endif %}
 
-                    <!-- Photo Upload with Preview -->
-                    <div class="d-flex flex-column flex-sm-row align-items-center gap-4 mb-4 pb-4 border-bottom">
-                        <div class="position-relative">
-                            {% if user.profile_photo %}
-                                <img id="avatarPreview" src="{{ user.profile_photo.url }}" alt="{{ user.username }}" class="rounded-circle shadow-sm" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #3b82f6;">
-                            {% else %}
-                                <div id="avatarFallback" class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold fs-1" style="width: 100px; height: 100px; background: linear-gradient(135deg, #3b82f6, #6366f1);">
-                                    {{ user.first_name|default:user.username|make_list|first|upper }}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted">Username (Fixed)</label>
+                                <input type="text" class="form-control bg-light" value="{{ user.username }}" disabled>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small text-muted">Role (Designated)</label>
+                                <input type="text" class="form-control bg-light" value="{{ user.get_role_display }}" disabled>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold small text-dark">
+                                    First Name
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.first_name.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold small text-dark">
+                                    Last Name
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.last_name.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold small text-dark">
+                                    Email Address <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    {{ form.email }}
                                 </div>
-                                <img id="avatarPreview" src="" alt="Avatar preview" class="rounded-circle shadow-sm d-none" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #3b82f6;">
-                            {% endif %}
-                        </div>
-
-                        <div class="flex-grow-1 w-100">
-                            <label for="{{ form.profile_photo.id_for_label }}" class="form-label fw-semibold text-dark">
-                                Upload New Profile Photo
-                            </label>
-                            {{ form.profile_photo }}
-                            {% if form.profile_photo.errors %}
-                                <div class="text-danger small mt-1">{{ form.profile_photo.errors|striptags }}</div>
-                            {% else %}
-                                <small class="text-muted d-block mt-1">Accepts JPG, PNG, WEBP images (recommended square aspect ratio).</small>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="row g-3">
-                        <!-- Read-only Username & Role -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted">Username (Fixed)</label>
-                            <input type="text" class="form-control bg-light" value="{{ user.username }}" disabled>
-                            <small class="text-muted">Username cannot be changed after registration.</small>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold text-muted">Role (Designated)</label>
-                            <input type="text" class="form-control bg-light" value="{{ user.get_role_display }}" disabled>
-                            <small class="text-muted">Role permissions are configured upon account creation.</small>
-                        </div>
-
-                        <!-- First Name -->
-                        <div class="col-md-6">
-                            <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold text-dark">
-                                First Name
-                            </label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}
-                                <div class="text-danger small mt-1">{{ form.first_name.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Last Name -->
-                        <div class="col-md-6">
-                            <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold text-dark">
-                                Last Name
-                            </label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}
-                                <div class="text-danger small mt-1">{{ form.last_name.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-md-6">
-                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold text-dark">
-                                Email Address <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
-                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                            {% if form.email.errors %}
-                                <div class="text-danger small mt-1">{{ form.email.errors|striptags }}</div>
-                            {% endif %}
-                        </div>
 
-                        <!-- Contact Number -->
-                        <div class="col-md-6">
-                            <label for="{{ form.contact_number.id_for_label }}" class="form-label fw-semibold text-dark">
-                                Contact Number
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
-                                {{ form.contact_number }}
+                            <div class="col-md-6">
+                                <label for="{{ form.contact_number.id_for_label }}" class="form-label fw-semibold small text-dark">
+                                    Contact Number
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                    {{ form.contact_number }}
+                                </div>
+                                {% if form.contact_number.errors %}
+                                    <div class="text-danger small mt-1">{{ form.contact_number.errors|striptags }}</div>
+                                {% endif %}
                             </div>
-                            {% if form.contact_number.errors %}
-                                <div class="text-danger small mt-1">{{ form.contact_number.errors|striptags }}</div>
-                            {% endif %}
                         </div>
-                    </div>
 
-                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-                        <a href="{% url 'profile' %}" class="btn btn-light px-4">
-                            Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary-custom px-4">
-                            <i class="bi bi-check-lg me-1"></i> Save Changes
-                        </button>
-                    </div>
-                </form>
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a href="{% url 'profile' %}" class="lu-btn-outline text-decoration-none px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="lu-btn-black px-4">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -3,85 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ReciteReady | Oral Recitation & Performance Assessment Platform{% endblock %}</title>
+    <title>{% block title %}ReciteReady | Practice Randomly, Answer Confidently{% endblock %}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Geometric Minimalist Typography (Jost + DM Sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --rr-primary: #3b82f6;
-            --rr-primary-dark: #1d4ed8;
-            --rr-accent: #6366f1;
-            --rr-dark: #0f172a;
-            --rr-light: #f8fafc;
+            --lu-black: #0a0a0a;
+            --lu-ink: #141414;
+            --lu-charcoal: #262626;
+            --lu-gray-dark: #525252;
+            --lu-gray-muted: #737373;
+            --lu-gray-light: #a3a3a3;
+            --lu-border-soft: #e5e5e5;
+            --lu-border-ink: #171717;
+            --lu-surface-soft: #f5f5f5;
+            --lu-bg-canvas: #ececec;
+            --lu-white: #ffffff;
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--lu-bg-canvas);
+            color: var(--lu-ink);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
-        .navbar-brand {
+
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: 'Jost', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        /* Subtle organic topographic contour lines on page canvas */
+        .lu-canvas-waves {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            opacity: 0.45;
+        }
+
+        main, nav, footer, .lu-alerts-wrap {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==========================================
+           TOP NAVIGATION BAR (Monochrome Black)
+        ========================================== */
+        .lu-navbar {
+            background-color: var(--lu-black);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.85rem 0;
+        }
+
+        .lu-brand {
+            font-family: 'Jost', sans-serif;
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.03em;
+            color: var(--lu-white) !important;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .lu-brand-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--lu-white);
+            color: var(--lu-black);
+            font-family: 'Jost', sans-serif;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--rr-dark);
+            font-size: 0.95rem;
+            letter-spacing: -1px;
         }
-        .navbar-brand span {
-            color: var(--rr-primary);
-        }
-        .nav-link {
+
+        .lu-navbar .nav-link {
+            font-family: 'DM Sans', sans-serif;
             font-weight: 500;
-            color: #475569;
-            transition: color 0.15s ease-in-out;
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.68);
+            padding: 0.5rem 0.9rem !important;
+            border-radius: 10px;
+            transition: all 0.18s ease;
         }
-        .nav-link:hover, .nav-link.active {
-            color: var(--rr-primary);
+
+        .lu-navbar .nav-link:hover {
+            color: var(--lu-white);
+            background: rgba(255, 255, 255, 0.08);
         }
-        .card-custom {
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            background: #ffffff;
-        }
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-            color: white;
-            border: none;
+
+        .lu-navbar .nav-link.active {
+            color: var(--lu-black) !important;
+            background: var(--lu-white);
             font-weight: 600;
-            padding: 0.65rem 1.25rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-            transition: all 0.2s ease;
         }
-        .btn-primary-custom:hover {
-            background: linear-gradient(135deg, #1d4ed8, #2563eb);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+
+        .lu-navbar .navbar-toggler {
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 10px;
+            padding: 0.4rem 0.65rem;
         }
-        .badge-role-instructor {
-            background-color: #fef3c7;
-            color: #92400e;
-            border: 1px solid #fde68a;
-            font-weight: 600;
-            padding: 0.35em 0.75em;
-            border-radius: 9999px;
+
+        .lu-navbar .navbar-toggler-icon {
+            filter: invert(1);
         }
-        .badge-role-student {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-            font-weight: 600;
-            padding: 0.35em 0.75em;
-            border-radius: 9999px;
-        }
+
+        /* Monogram Avatar (Screen 6 inspired) */
         .avatar-circle {
             width: 38px;
             height: 38px;
@@ -89,56 +138,526 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            color: #ffffff;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: #a3a3a3;
+            color: var(--lu-white);
             object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.25);
         }
+
+        .lu-avatar-lg {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 2.1rem;
+            background: #9e9e9e;
+            color: var(--lu-white);
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ==========================================
+           CORE CARDS & SURFACES
+        ========================================== */
+        .card-custom, .lu-card {
+            background: var(--lu-white);
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .lu-ink-card {
+            background: var(--lu-white);
+            border: 1.5px solid var(--lu-border-ink);
+            border-radius: 16px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .lu-ink-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Curved Dark Hero Header (Screens 3, 5, 6) */
+        .lu-dark-hero {
+            background: var(--lu-black);
+            color: var(--lu-white);
+            border-radius: 26px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lu-dark-curved-top {
+            background: var(--lu-black);
+            color: var(--lu-white);
+            position: relative;
+            border-radius: 24px 24px 36px 36px;
+            overflow: hidden;
+        }
+
+        /* Floating seam pill (Screen 6: "10 Courses you're enrolled in") */
+        .lu-seam-pill {
+            background: var(--lu-white);
+            color: var(--lu-black);
+            border: 1px solid rgba(10, 10, 10, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem 1.65rem;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            position: relative;
+            z-index: 3;
+            margin-top: -1.6rem;
+        }
+
+        /* Black Square Category / Quick-Action Tiles (Screen 3) */
+        .lu-square-tile-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--lu-ink);
+            gap: 0.5rem;
+            transition: transform 0.18s ease;
+        }
+
+        .lu-square-tile-wrap:hover {
+            transform: translateY(-3px);
+            color: var(--lu-black);
+        }
+
+        .lu-square-tile {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            background: var(--lu-black);
+            color: var(--lu-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.65rem;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+            transition: background 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .lu-square-tile-wrap:hover .lu-square-tile {
+            background: var(--lu-charcoal);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+        }
+
+        .lu-square-tile-sm {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: var(--lu-black);
+            color: var(--lu-white);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .lu-tile-label {
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Horizontal Ink-Bordered Course/Deck Row (Screens 3, 5, 6) */
+        .lu-list-row {
+            background: var(--lu-white);
+            border: 1.5px solid var(--lu-border-ink);
+            border-radius: 14px;
+            padding: 0.95rem 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--lu-ink);
+            transition: all 0.18s ease;
+        }
+
+        .lu-list-row:hover {
+            background: #fafafa;
+            transform: translateX(3px);
+            color: var(--lu-black);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .lu-play-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1.75px solid var(--lu-black);
+            color: var(--lu-black);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            transition: all 0.18s ease;
+        }
+
+        .lu-list-row:hover .lu-play-circle,
+        a:hover > .lu-play-circle {
+            background: var(--lu-black);
+            color: var(--lu-white);
+        }
+
+        /* ==========================================
+           BUTTONS (Screens 1, 2, 4)
+        ========================================== */
+        .btn-primary-custom, .lu-btn-black {
+            background: var(--lu-black);
+            color: var(--lu-white) !important;
+            border: 1.5px solid var(--lu-black);
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            padding: 0.65rem 1.35rem;
+            border-radius: 12px;
+            transition: all 0.18s ease;
+        }
+
+        .btn-primary-custom:hover, .lu-btn-black:hover {
+            background: var(--lu-charcoal);
+            border-color: var(--lu-charcoal);
+            color: var(--lu-white) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-primary-custom:disabled, .btn-primary-custom.disabled,
+        .lu-btn-black:disabled, .lu-btn-black.disabled {
+            background: #a3a3a3;
+            border-color: #a3a3a3;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .lu-btn-outline, .btn-outline-secondary, .btn-outline-primary {
+            background: var(--lu-white);
+            color: var(--lu-black) !important;
+            border: 1.5px solid var(--lu-border-ink) !important;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            padding: 0.6rem 1.25rem;
+            border-radius: 12px;
+            transition: all 0.18s ease;
+        }
+
+        .lu-btn-outline:hover, .btn-outline-secondary:hover, .btn-outline-primary:hover {
+            background: var(--lu-black) !important;
+            color: var(--lu-white) !important;
+            border-color: var(--lu-black) !important;
+        }
+
+        .lu-btn-white {
+            background: var(--lu-white);
+            color: var(--lu-black) !important;
+            border: 1.5px solid var(--lu-white);
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            padding: 0.6rem 1.25rem;
+            border-radius: 12px;
+            transition: all 0.18s ease;
+        }
+
+        .lu-btn-white:hover {
+            background: #e5e5e5;
+            border-color: #e5e5e5;
+            color: var(--lu-black) !important;
+        }
+
+        .lu-btn-chevron {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        /* ==========================================
+           BADGES & ROLE PILLS
+        ========================================== */
+        .badge-role-instructor,
+        .badge-role-student {
+            background-color: var(--lu-white);
+            color: var(--lu-black);
+            border: 1.5px solid var(--lu-black);
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 0.78rem;
+            padding: 0.3em 0.85em;
+            border-radius: 9999px;
+            letter-spacing: 0.02em;
+        }
+
+        .lu-navbar .badge-role-instructor,
+        .lu-navbar .badge-role-student {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--lu-white);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .lu-pill-dark {
+            background: var(--lu-black);
+            color: var(--lu-white);
+            border-radius: 999px;
+            padding: 0.32rem 0.8rem;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 0.78rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .lu-pill-outline {
+            background: var(--lu-white);
+            color: var(--lu-black);
+            border: 1.5px solid var(--lu-black);
+            border-radius: 999px;
+            padding: 0.28rem 0.75rem;
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            font-size: 0.78rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .lu-pill-soft {
+            background: var(--lu-surface-soft);
+            color: var(--lu-charcoal);
+            border: 1px solid var(--lu-border-soft);
+            border-radius: 999px;
+            padding: 0.28rem 0.75rem;
+            font-weight: 600;
+            font-size: 0.78rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* ==========================================
+           MONOCHROME FORM CONTROLS & SEARCH BAR
+        ========================================== */
+        .form-control, .form-select {
+            border: 1.5px solid #d4d4d4;
+            border-radius: 12px;
+            padding: 0.65rem 0.95rem;
+            font-size: 0.95rem;
+            color: var(--lu-ink);
+            background-color: var(--lu-white);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--lu-black);
+            box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1);
+            outline: none;
+        }
+
+        .input-group-text {
+            border: 1.5px solid #d4d4d4;
+            border-radius: 12px;
+            background-color: var(--lu-surface-soft);
+            color: var(--lu-ink);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--lu-black);
+            border-color: var(--lu-black);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.12);
+            border-color: var(--lu-black);
+        }
+
+        /* White Search Input on Black Header (Screen 3) */
+        .lu-search-bar {
+            background: var(--lu-white);
+            border-radius: 14px;
+            padding: 0.35rem 0.5rem 0.35rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        }
+
+        .lu-search-bar input {
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0.45rem 0.25rem;
+            background: transparent;
+            color: var(--lu-black);
+            font-size: 0.95rem;
+        }
+
+        .lu-search-bar input::placeholder {
+            color: #8a8a8a;
+        }
+
+        /* ==========================================
+           PROGRESS BARS & RING (Screens 5 & 6)
+        ========================================== */
+        .lu-progress {
+            height: 7px;
+            background-color: #e5e5e5;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .lu-progress .progress-bar {
+            background-color: var(--lu-black);
+            border-radius: 999px;
+        }
+
+        .lu-ring-wrap {
+            position: relative;
+            width: 148px;
+            height: 148px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lu-ring-wrap svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .lu-ring-value {
+            position: absolute;
+            font-family: 'Jost', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--lu-black);
+        }
+
+        /* ==========================================
+           TABLES, DROPDOWNS & ALERTS
+        ========================================== */
+        .dropdown-menu {
+            border: 1.5px solid var(--lu-border-ink) !important;
+            border-radius: 16px !important;
+            padding: 0.4rem;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.14) !important;
+        }
+
+        .dropdown-item {
+            border-radius: 10px;
+            font-weight: 500;
+            color: var(--lu-ink);
+        }
+
+        .dropdown-item:hover {
+            background: var(--lu-surface-soft);
+            color: var(--lu-black);
+        }
+
+        .lu-alert {
+            background: var(--lu-white);
+            border: 1.5px solid var(--lu-black);
+            border-left-width: 5px;
+            border-radius: 14px;
+            color: var(--lu-black);
+        }
+
+        .table thead th {
+            font-family: 'Jost', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-size: 0.74rem;
+            color: var(--lu-gray-muted);
+            border-bottom: 1.5px solid var(--lu-border-ink);
+            background: var(--lu-surface-soft);
+        }
+
+        /* ==========================================
+           MONOCHROME FOOTER
+        ========================================== */
         footer {
             margin-top: auto;
-            background-color: #ffffff;
-            border-top: 1px solid #e2e8f0;
+            background-color: var(--lu-white);
+            border-top: 1px solid rgba(10, 10, 10, 0.08);
+        }
+
+        /* Utility text overrides for crisp monochrome cohesion */
+        .text-primary {
+            color: var(--lu-black) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--lu-black) !important;
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
+    <!-- Subtle Organic Contour Wave Backdrop (Inspired by Learn Up Canvas) -->
+    <div class="lu-canvas-waves" aria-hidden="true">
+        <svg width="100%" height="100%" viewBox="0 0 1440 900" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1120 -40C1060 90 1240 160 1160 280C1080 400 1320 420 1480 340" stroke="#1a1a1a" stroke-width="1.2" stroke-opacity="0.22"/>
+            <path d="M1190 -50C1140 80 1320 140 1240 260C1160 380 1370 430 1500 370" stroke="#1a1a1a" stroke-width="1" stroke-opacity="0.16"/>
+            <path d="M-60 440C90 360 180 490 95 610C10 730 170 790 260 920" stroke="#1a1a1a" stroke-width="1.2" stroke-opacity="0.22"/>
+            <path d="M-80 510C55 430 135 550 55 660C-25 770 115 840 190 940" stroke="#1a1a1a" stroke-width="1" stroke-opacity="0.15"/>
+            <path d="M980 940C1060 800 1220 820 1290 730C1360 640 1430 690 1490 640" stroke="#1a1a1a" stroke-width="1.2" stroke-opacity="0.18"/>
+        </svg>
+    </div>
+
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-3">
+    <nav class="navbar navbar-expand-lg lu-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{% if user.is_authenticated %}{% url 'role_dashboard' %}{% else %}{% url 'home' %}{% endif %}">
-                <span class="p-2 rounded-3 bg-primary text-white d-inline-flex align-items-center justify-content-center shadow-sm">
-                    <i class="bi bi-mic-fill fs-5"></i>
-                </span>
-                <span class="fs-4">Recite<span>Ready</span></span>
+            <a class="lu-brand" href="{% if user.is_authenticated %}{% url 'role_dashboard' %}{% else %}{% url 'home' %}{% endif %}">
+                <span class="lu-brand-mark">[ ]</span>
+                <span>recite ready</span>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name in 'role_dashboard instructor_dashboard student_dashboard' %}active text-primary fw-bold{% endif %}" href="{% url 'role_dashboard' %}">
-                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                            <a class="nav-link {% if request.resolver_match.url_name in 'role_dashboard instructor_dashboard student_dashboard' %}active{% endif %}" href="{% url 'role_dashboard' %}">
+                                <i class="bi bi-grid-fill me-1"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if 'deck' in request.resolver_match.url_name or 'question' in request.resolver_match.url_name %}active text-primary fw-bold{% endif %}" href="{% url 'deck_list' %}">
+                            <a class="nav-link {% if 'deck' in request.resolver_match.url_name or 'question' in request.resolver_match.url_name or 'practice' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'deck_list' %}">
                                 <i class="bi bi-stack me-1"></i> Question Bank
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if 'analytics' in request.resolver_match.url_name %}active text-primary fw-bold{% endif %}" href="{% url 'analytics_dashboard' %}">
+                            <a class="nav-link {% if 'analytics' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'analytics_dashboard' %}">
                                 <i class="bi bi-graph-up-arrow me-1"></i> Analytics
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if 'reminders' in request.resolver_match.url_name %}active text-primary fw-bold{% endif %}" href="{% url 'reminders' %}">
+                            <a class="nav-link {% if 'reminders' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'reminders' %}">
                                 <i class="bi bi-alarm me-1"></i> Reminders
                             </a>
                         </li>
@@ -147,7 +666,7 @@
                             <a class="nav-link" href="{% url 'home' %}#features">Features</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}#about">About</a>
+                            <a class="nav-link" href="{% url 'home' %}#workflow">How It Works</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -155,10 +674,10 @@
                 <div class="d-flex align-items-center gap-3">
                     {% if user.is_authenticated %}
                         <!-- Notification Bell -->
-                        <a href="{% url 'reminders' %}" class="btn btn-light position-relative rounded-circle p-2 text-secondary" title="Practice Reminders & Alerts">
-                            <i class="bi bi-bell-fill fs-5"></i>
+                        <a href="{% url 'reminders' %}" class="btn position-relative rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px; background: rgba(255,255,255,0.1); color: #fff;" title="Practice Reminders & Alerts">
+                            <i class="bi bi-bell-fill"></i>
                             {% if unread_notifications_count > 0 %}
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-white text-dark border border-dark" style="font-size: 0.65rem;">
                                     {{ unread_notifications_count }}
                                 </span>
                             {% endif %}
@@ -177,46 +696,44 @@
 
                         <!-- Profile Dropdown -->
                         <div class="dropdown">
-                            <button class="btn btn-link text-decoration-none p-0 d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-link text-decoration-none p-0 d-flex align-items-center gap-2 dropdown-toggle text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {% if user.profile_photo %}
                                     <img src="{{ user.profile_photo.url }}" alt="{{ user.username }}" class="avatar-circle">
                                 {% else %}
                                     <div class="avatar-circle">
-                                        {{ user.first_name|default:user.username|make_list|first|upper }}
+                                        {{ user.first_name|default:user.username|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}
                                     </div>
                                 {% endif %}
-                                <span class="d-none d-sm-inline fw-semibold text-dark">{{ user.get_full_name|default:user.username }}</span>
+                                <span class="d-none d-sm-inline fw-medium text-white small">{{ user.get_full_name|default:user.username }}</span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 rounded-3">
+                            <ul class="dropdown-menu dropdown-menu-end mt-2">
                                 <li class="px-3 py-2 border-bottom">
-                                    <div class="fw-bold text-dark">{{ user.get_full_name|default:user.username }}</div>
-                                    <div class="small text-muted text-truncate" style="max-width: 180px;">{{ user.email }}</div>
+                                    <div class="fw-bold text-dark font-display">{{ user.get_full_name|default:user.username }}</div>
+                                    <div class="small text-muted text-truncate" style="max-width: 190px;">{{ user.email }}</div>
                                     <div class="mt-1">
-                                        <span class="badge {% if user.role == 'INSTRUCTOR' %}bg-warning-subtle text-warning-emphasis{% else %}bg-info-subtle text-info-emphasis{% endif %}">
-                                            {{ user.get_role_display }}
-                                        </span>
+                                        <span class="lu-pill-soft" style="font-size: 0.7rem;">{{ user.get_role_display }}</span>
                                     </div>
                                 </li>
-                                <li>
+                                <li class="mt-1">
                                     <a class="dropdown-item py-2" href="{% url 'profile' %}">
-                                        <i class="bi bi-person me-2 text-primary"></i> My Profile
+                                        <i class="bi bi-person me-2"></i> My Profile
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2" href="{% url 'profile_edit' %}">
-                                        <i class="bi bi-pencil-square me-2 text-primary"></i> Edit Profile
+                                        <i class="bi bi-pencil-square me-2"></i> Edit Profile
                                     </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item py-2" href="{% url 'account_settings' %}">
-                                        <i class="bi bi-gear me-2 text-secondary"></i> Account Settings
+                                        <i class="bi bi-gear me-2"></i> Account Settings
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider my-1"></li>
                                 <li>
                                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="dropdown-item py-2 text-danger">
+                                        <button type="submit" class="dropdown-item py-2 fw-semibold">
                                             <i class="bi bi-box-arrow-right me-2"></i> Log Out
                                         </button>
                                     </form>
@@ -224,11 +741,11 @@
                             </ul>
                         </div>
                     {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-outline-secondary fw-semibold px-3 py-2">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                        <a href="{% url 'login' %}" class="btn btn-sm px-3 py-2 fw-semibold text-white" style="border: 1.5px solid rgba(255,255,255,0.45); border-radius: 10px; font-family: 'Jost', sans-serif;">
+                            Log In
                         </a>
-                        <a href="{% url 'register' %}" class="btn btn-primary-custom px-3 py-2">
-                            <i class="bi bi-person-plus me-1"></i> Register
+                        <a href="{% url 'register' %}" class="lu-btn-white btn-sm px-3 py-2 text-decoration-none">
+                            Sign Up
                         </a>
                     {% endif %}
                 </div>
@@ -237,20 +754,20 @@
     </nav>
 
     <!-- Global Messages / Alerts -->
-    <div class="container mt-3">
+    <div class="container mt-3 lu-alerts-wrap">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'info' %}info{% elif message.tags == 'warning' %}warning{% else %}success{% endif %} alert-dismissible fade show shadow-sm border-0 d-flex align-items-center gap-2" role="alert">
+                <div class="alert lu-alert alert-dismissible fade show shadow-sm d-flex align-items-center gap-2 py-2 px-3" role="alert">
                     {% if message.tags == 'error' %}
-                        <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                        <i class="bi bi-exclamation-octagon-fill fs-5"></i>
                     {% elif message.tags == 'warning' %}
-                        <i class="bi bi-exclamation-circle-fill fs-5 text-warning"></i>
+                        <i class="bi bi-exclamation-circle-fill fs-5"></i>
                     {% elif message.tags == 'info' %}
-                        <i class="bi bi-info-circle-fill fs-5 text-info"></i>
+                        <i class="bi bi-info-circle-fill fs-5"></i>
                     {% else %}
-                        <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                        <i class="bi bi-check-circle-fill fs-5"></i>
                     {% endif %}
-                    <div>{{ message }}</div>
+                    <div class="small fw-medium">{{ message }}</div>
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
@@ -267,12 +784,15 @@
         <div class="container">
             <div class="row align-items-center justify-content-between gy-3">
                 <div class="col-md-6 text-center text-md-start">
-                    <div class="fw-bold text-dark fs-5">Recite<span class="text-primary">Ready</span></div>
-                    <div class="small text-muted">IM2 Project | Oral Recitation & Performance Assessment Platform</div>
+                    <div class="d-inline-flex align-items-center gap-2 mb-1">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-2 bg-dark text-white fw-bold" style="width: 24px; height: 24px; font-size: 0.72rem; font-family: 'Jost', sans-serif;">[ ]</span>
+                        <span class="fw-bold text-dark fs-5 font-display">recite ready</span>
+                    </div>
+                    <div class="small text-muted">Practice Randomly, Answer Confidently &bull; Oral Recitation Platform</div>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <span class="badge bg-light text-muted border me-2">Django 6.1</span>
-                    <span class="badge bg-light text-muted border me-2">Supabase PostgreSQL</span>
+                    <span class="lu-pill-soft me-1">Django 6.1</span>
+                    <span class="lu-pill-soft">PostgreSQL</span>
                     <div class="small text-muted mt-1">&copy; 2026 ReciteReady. All rights reserved.</div>
                 </div>
             </div>

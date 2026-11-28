@@ -1,29 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %}Delete Question | ReciteReady{% endblock %}
+{% block title %}Delete Question | recite ready{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="card card-custom border-0 p-4 shadow-sm text-center">
-                <div class="p-3 rounded-circle bg-danger-subtle text-danger d-inline-flex mx-auto mb-3">
-                    <i class="bi bi-trash3-fill fs-3"></i>
+            <div class="lu-card p-4 p-md-5 text-center">
+                <div class="lu-square-tile mx-auto mb-3">
+                    <i class="bi bi-trash3-fill"></i>
                 </div>
                 <h4 class="fw-bold text-dark mb-2">Delete Question?</h4>
-                <p class="text-secondary small mb-3">
-                    Are you sure you want to remove this question from <strong>{{ deck.title }}</strong>?
-                </p>
+                <p class="text-secondary small mb-3">Remove this prompt from <strong>{{ deck.title }}</strong>?</p>
 
-                <div class="p-3 bg-light rounded-3 text-start mb-4 border">
-                    <div class="small fw-semibold text-muted mb-1">Question Prompt:</div>
+                <div class="lu-ink-card p-3 text-start mb-4">
+                    <div class="small fw-semibold text-muted text-uppercase mb-1" style="font-size: 0.7rem;">Prompt</div>
                     <div class="small text-dark">{{ question.prompt }}</div>
                 </div>
 
-                <form method="post" class="d-flex justify-content-center gap-2">
+                <form method="post" class="d-grid gap-2">
                     {% csrf_token %}
-                    <a href="{% url 'deck_detail' deck.id %}" class="btn btn-outline-secondary px-4">Cancel</a>
-                    <button type="submit" class="btn btn-danger px-4">Yes, Delete</button>
+                    <button type="submit" class="lu-btn-black py-2">Yes, Delete Question</button>
+                    <a href="{% url 'deck_detail' deck.id %}" class="lu-btn-outline text-decoration-none py-2">Cancel</a>
                 </form>
             </div>
         </div>

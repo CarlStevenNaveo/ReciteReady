@@ -1,147 +1,290 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome to ReciteReady | Oral Recitation & Performance Platform{% endblock %}
+{% block title %}recite ready | Practice Randomly, Answer Confidently{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lu-onboard-card {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid rgba(10, 10, 10, 0.08);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    .lu-wave-corner {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .lu-onboard-inner {
+        position: relative;
+        z-index: 1;
+    }
+    .lu-dot-active {
+        width: 24px;
+        height: 6px;
+        border-radius: 99px;
+        background: #0a0a0a;
+        display: inline-block;
+    }
+    .lu-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #bdbdbd;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Hero Section -->
-    <div class="row align-items-center py-5 gy-5">
-        <div class="col-lg-6">
-            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-semibold mb-3">
-                <i class="bi bi-stars me-1"></i> Interactive Academic Evaluation
-            </span>
-            <h1 class="display-4 fw-extrabold text-dark lh-sm mb-3" style="font-weight: 800;">
-                Master Oral Recitations with <span class="text-primary">Confidence</span> & <span class="text-indigo" style="color: #6366f1;">Clarity</span>.
-            </h1>
-            <p class="lead text-secondary mb-4">
-                ReciteReady is the all-in-one platform built for academic institutions to streamline oral recitation scheduling, rubric-based performance assessments, and real-time student feedback.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-                <a href="{% url 'register' %}" class="btn btn-primary-custom btn-lg px-4 py-3">
-                    <i class="bi bi-person-plus me-2"></i> Create Your Account
-                </a>
-                <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg px-4 py-3 fw-semibold">
-                    <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
-                </a>
-            </div>
-            <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top text-muted small">
-                <div class="d-flex align-items-center gap-1">
-                    <i class="bi bi-check-circle-fill text-success"></i> Role-Based Portals
+<div class="container py-3 py-lg-4">
+    <!-- Hero Showcase: Screen 1 Onboarding Concept + Screen 5/3 Preview -->
+    <div class="row align-items-stretch gy-4 mb-5">
+        <!-- Left: Screen 1 Editorial Concept Hero -->
+        <div class="col-lg-6 d-flex">
+            <div class="lu-onboard-card p-4 p-md-5 w-100 d-flex flex-column justify-content-between">
+                <!-- Organic Wave Lines Inside Card -->
+                <svg class="lu-wave-corner" viewBox="0 0 600 620" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-20 40C70 110 170 40 240 -20" stroke="#111111" stroke-width="1.2" stroke-opacity="0.22"/>
+                    <path d="M410 -15C380 85 480 120 465 205C450 290 560 280 620 230" stroke="#111111" stroke-width="1.2" stroke-opacity="0.24"/>
+                    <path d="M460 -10C435 75 520 105 510 180C500 255 580 250 625 215" stroke="#111111" stroke-width="1" stroke-opacity="0.16"/>
+                    <path d="M-20 560C110 510 170 595 275 550C380 505 460 595 620 535" stroke="#111111" stroke-width="1.2" stroke-opacity="0.2"/>
+                </svg>
+
+                <div class="lu-onboard-inner">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-3 bg-dark text-white fw-bold mb-3" style="width: 46px; height: 46px; font-family: 'Jost', sans-serif; font-size: 1.2rem; letter-spacing: -1px;">
+                        [ ]
+                    </div>
+                    <h1 class="display-5 fw-bold text-dark mb-2" style="line-height: 1.12;">
+                        recite ready
+                    </h1>
+                    <p class="fs-5 text-secondary mb-4" style="max-width: 420px;">
+                        Practice randomly, answer confidently. Turn study notes into timed oral recitation drills.
+                    </p>
+
+                    <!-- Editorial Monochrome Illustration (Student on stacked books with laptop & mic) -->
+                    <div class="text-center my-4">
+                        <svg width="260" height="190" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Student preparing for oral recitation">
+                            <!-- Soft grayscale botanical leaves behind books -->
+                            <path d="M72 172C52 150 48 122 65 102C78 122 86 148 82 172H72Z" fill="#d4d4d4"/>
+                            <path d="M52 172C36 158 32 138 44 124C56 138 62 156 60 172H52Z" fill="#e5e5e5"/>
+                            <!-- Stacked Books -->
+                            <rect x="78" y="160" width="124" height="16" rx="4" fill="#0a0a0a"/>
+                            <rect x="86" y="164" width="84" height="3" rx="1.5" fill="#ffffff" fill-opacity="0.4"/>
+                            <rect x="92" y="143" width="114" height="15" rx="4" fill="#262626"/>
+                            <rect x="100" y="147" width="76" height="3" rx="1.5" fill="#ffffff" fill-opacity="0.5"/>
+                            <rect x="84" y="126" width="110" height="15" rx="4" fill="#0a0a0a"/>
+                            <rect x="92" y="130" width="66" height="3" rx="1.5" fill="#ffffff" fill-opacity="0.45"/>
+                            <!-- Seated Student Silhouette -->
+                            <circle cx="136" cy="54" r="13" fill="#0a0a0a"/>
+                            <!-- Flowing Hair -->
+                            <path d="M124 52C116 62 114 82 122 96C128 84 132 70 130 58Z" fill="#171717"/>
+                            <!-- Torso -->
+                            <path d="M126 70C126 67 146 67 148 72L154 106H122L126 70Z" fill="#171717"/>
+                            <!-- Legs on books -->
+                            <path d="M124 106H168C174 106 177 110 177 115V126H164V116H124V106Z" fill="#0a0a0a"/>
+                            <path d="M164 116L179 144L170 148L154 120L164 116Z" fill="#171717"/>
+                            <!-- Arm holding laptop -->
+                            <path d="M144 78L168 96L164 102L139 85L144 78Z" fill="#262626"/>
+                            <!-- Laptop -->
+                            <path d="M162 102H196L203 74H170L162 102Z" fill="#0a0a0a"/>
+                            <path d="M167 99H193L198 78H173L167 99Z" fill="#ffffff"/>
+                            <rect x="155" y="102" width="44" height="4" rx="2" fill="#0a0a0a"/>
+                            <!-- Soundwave / Oral Recitation Prompt Bubbles -->
+                            <rect x="198" y="34" width="52" height="26" rx="8" fill="#ffffff" stroke="#0a0a0a" stroke-width="1.8"/>
+                            <rect x="210" y="44" width="3" height="8" rx="1.5" fill="#0a0a0a"/>
+                            <rect x="217" y="40" width="3" height="16" rx="1.5" fill="#0a0a0a"/>
+                            <rect x="224" y="43" width="3" height="10" rx="1.5" fill="#0a0a0a"/>
+                            <rect x="231" y="41" width="3" height="14" rx="1.5" fill="#0a0a0a"/>
+                            <rect x="238" y="45" width="3" height="6" rx="1.5" fill="#0a0a0a"/>
+                            <!-- Ground Line -->
+                            <line x1="36" y1="178" x2="244" y2="178" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center gap-1">
-                    <i class="bi bi-check-circle-fill text-success"></i> Real-time Grading
-                </div>
-                <div class="d-flex align-items-center gap-1">
-                    <i class="bi bi-check-circle-fill text-success"></i> Instant Feedback
+
+                <!-- Bottom Row: Indicator Dots + Black Chevron CTA (Screen 1) -->
+                <div class="lu-onboard-inner d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3 border-top">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="lu-dot-active"></span>
+                        <span class="lu-dot"></span>
+                        <span class="lu-dot"></span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'login' %}" class="lu-btn-outline text-decoration-none px-4">
+                            Log In
+                        </a>
+                        <a href="{% url 'register' %}" class="lu-btn-black lu-btn-chevron text-decoration-none px-4">
+                            <span>Sign Up</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-6">
-            <div class="position-relative">
-                <div class="card card-custom p-4 shadow-lg border-0 bg-white">
-                    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="p-2 rounded bg-primary text-white">
-                                <i class="bi bi-mic-fill"></i>
-                            </span>
-                            <div>
-                                <h6 class="mb-0 fw-bold">Active Recitation Defense</h6>
-                                <small class="text-muted">CS301 - Information Management 2</small>
-                            </div>
+        <!-- Right: Screen 3 + Screen 5 Monochrome Dashboard Preview -->
+        <div class="col-lg-6 d-flex">
+            <div class="lu-card w-100 d-flex flex-column">
+                <!-- Black Curved Header Cradling Readiness Gauge -->
+                <div class="lu-dark-curved-top p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">
+                            Live Oral Readiness Preview
                         </div>
-                        <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill">
-                            <i class="bi bi-record-fill me-1"></i> Live
+                        <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-semibold">
+                            <i class="bi bi-shuffle me-1"></i> Randomized
                         </span>
                     </div>
 
-                    <!-- Mini Preview Cards -->
-                    <div class="bg-light p-3 rounded-3 mb-3 border">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="fw-semibold small">Current Candidate</span>
-                            <span class="badge bg-success-subtle text-success">94/100 Points</span>
-                        </div>
-                        <div class="fw-bold text-dark">Juan Dela Cruz (Student)</div>
-                        <div class="small text-muted">Topic: 3rd Normal Form & Boyce-Codd Normal Form</div>
-                    </div>
-
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <div class="border rounded p-2 text-center bg-white">
-                                <small class="text-muted d-block">Clarity & Eloquence</small>
-                                <span class="fw-bold text-primary">28/30</span>
+                    <!-- Floating White Ring Card (Screen 5 Signature) -->
+                    <div class="bg-white text-dark rounded-4 p-4 shadow-sm">
+                        <div class="row align-items-center gy-3">
+                            <div class="col-sm-6 text-center">
+                                <div class="lu-ring-wrap">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="50" stroke="#e5e5e5" stroke-width="7" fill="none"/>
+                                        <circle cx="60" cy="60" r="50" stroke="#0a0a0a" stroke-width="7" fill="none"
+                                                stroke-dasharray="314" stroke-dashoffset="38" stroke-linecap="round"/>
+                                    </svg>
+                                    <div class="lu-ring-value">88%</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 text-center text-sm-start">
+                                <div class="small text-muted fw-semibold text-uppercase mb-1">Active Deck</div>
+                                <h5 class="fw-bold text-dark mb-1">Database Normalization &amp; 3NF</h5>
+                                <div class="small text-secondary mb-2">
+                                    <i class="bi bi-stopwatch me-1"></i> 45s per prompt &bull; Voice Mode
+                                </div>
+                                <span class="lu-pill-dark">
+                                    <i class="bi bi-mic-fill"></i> Recitation Ready
+                                </span>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="border rounded p-2 text-center bg-white">
-                                <small class="text-muted d-block">Technical Accuracy</small>
-                                <span class="fw-bold text-primary">38/40</span>
+                    </div>
+                </div>
+
+                <!-- Lower White Section: Recommended Black Tiles + Ink-Bordered Rows (Screen 3) -->
+                <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
+                    <div class="mb-4">
+                        <div class="fw-bold font-display text-dark mb-3">Core Modules</div>
+                        <div class="d-flex justify-content-between gap-2 flex-wrap">
+                            <div class="lu-square-tile-wrap">
+                                <div class="lu-square-tile" style="width: 58px; height: 58px; font-size: 1.35rem; border-radius: 14px;">
+                                    <i class="bi bi-stack"></i>
+                                </div>
+                                <span class="lu-tile-label">Decks</span>
+                            </div>
+                            <div class="lu-square-tile-wrap">
+                                <div class="lu-square-tile" style="width: 58px; height: 58px; font-size: 1.35rem; border-radius: 14px;">
+                                    <i class="bi bi-shuffle"></i>
+                                </div>
+                                <span class="lu-tile-label">Random</span>
+                            </div>
+                            <div class="lu-square-tile-wrap">
+                                <div class="lu-square-tile" style="width: 58px; height: 58px; font-size: 1.35rem; border-radius: 14px;">
+                                    <i class="bi bi-mic-fill"></i>
+                                </div>
+                                <span class="lu-tile-label">Voice</span>
+                            </div>
+                            <div class="lu-square-tile-wrap">
+                                <div class="lu-square-tile" style="width: 58px; height: 58px; font-size: 1.35rem; border-radius: 14px;">
+                                    <i class="bi bi-bar-chart-fill"></i>
+                                </div>
+                                <span class="lu-tile-label">Scores</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-2 border rounded-2 bg-light small text-secondary">
-                        <i class="bi bi-chat-quote-fill text-primary me-1"></i>
-                        <em>"Demonstrated comprehensive understanding of transitive functional dependencies."</em>
+                    <div>
+                        <div class="fw-bold font-display text-dark mb-2">Sample Recitation Drills</div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="lu-list-row py-2 px-3">
+                                <div>
+                                    <div class="fw-bold small text-dark">1NF, 2NF, 3NF &amp; BCNF Defense</div>
+                                    <div class="text-muted" style="font-size: 0.78rem;">Information Management 2 &bull; 5 Questions</div>
+                                </div>
+                                <span class="lu-play-circle"><i class="bi bi-play-fill"></i></span>
+                            </div>
+                            <div class="lu-list-row py-2 px-3">
+                                <div>
+                                    <div class="fw-bold small text-dark">ACID Properties &amp; Indexing</div>
+                                    <div class="text-muted" style="font-size: 0.78rem;">Database Systems &bull; Timed 45s</div>
+                                </div>
+                                <span class="lu-play-circle"><i class="bi bi-play-fill"></i></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Features Section -->
-    <div id="features" class="py-5 border-top">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-dark">Tailored for Educators and Students</h2>
-            <p class="text-muted">Explore the purpose-built features for each academic role</p>
+    <!-- Features Section (Screen 4 Stat Style) -->
+    <div id="features" class="py-4">
+        <div class="text-center mb-4">
+            <span class="lu-pill-outline mb-2">Built for Academic Confidence</span>
+            <h2 class="fw-bold text-dark mb-1">Tailored for Students &amp; Instructors</h2>
+            <p class="text-secondary small">Minimalist, distraction-free workspace designed for high-focus oral recitation mastery.</p>
         </div>
 
-        <div class="row g-4">
-            <!-- Instructor Feature -->
+        <div class="row g-4" id="workflow">
             <div class="col-md-6">
-                <div class="card card-custom h-100 p-4 border-0">
+                <div class="lu-card p-4 h-100">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="p-3 rounded-3 bg-warning-subtle text-warning-emphasis">
-                            <i class="bi bi-mortarboard-fill fs-3"></i>
+                        <div class="lu-square-tile-sm">
+                            <i class="bi bi-person-workspace"></i>
                         </div>
                         <div>
-                            <span class="badge bg-warning-subtle text-warning-emphasis mb-1">For Instructors</span>
-                            <h4 class="fw-bold text-dark mb-0">Instructor Portal</h4>
-                        </div>
-                    </div>
-                    <p class="text-muted mb-4">
-                        Manage your classes, coordinate oral recitation schedules, design rubric grading metrics, and evaluate students with speed and precision.
-                    </p>
-                    <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Structured recitation session scheduler</li>
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Standardized rubric-based scorecards</li>
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Comprehensive class performance analytics</li>
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Role-protected instructor dashboard</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Student Feature -->
-            <div class="col-md-6">
-                <div class="card card-custom h-100 p-4 border-0">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="p-3 rounded-3 bg-info-subtle text-info-emphasis">
-                            <i class="bi bi-person-workspace fs-3"></i>
-                        </div>
-                        <div>
-                            <span class="badge bg-info-subtle text-info-emphasis mb-1">For Students</span>
+                            <span class="lu-pill-soft mb-1">For Students</span>
                             <h4 class="fw-bold text-dark mb-0">Student Portal</h4>
                         </div>
                     </div>
-                    <p class="text-muted mb-4">
-                        Never miss a recitation session. Prepare using syllabus prompts, review detailed rubric breakdowns, and track your recitation readiness over time.
+                    <p class="text-secondary small mb-3">
+                        Stop memorizing question order. Shuffle prompts into timed oral drills, speak your answers aloud, and track weak spots until you're recitation-ready.
                     </p>
-                    <ul class="list-unstyled d-flex flex-column gap-2 text-secondary small">
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Personalized recitation schedule countdown</li>
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Detailed rubric feedback from instructors</li>
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Historical score tracking and progress stats</li>
-                        <li><i class="bi bi-check2 text-primary me-2"></i> Profile customization and defense readiness score</li>
-                    </ul>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="lu-ink-card px-3 py-2 small d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle fw-bold"></i> Build &amp; share question banks with unique codes
+                        </div>
+                        <div class="lu-ink-card px-3 py-2 small d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle fw-bold"></i> Randomized timed drills with live speech transcription
+                        </div>
+                        <div class="lu-ink-card px-3 py-2 small d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle fw-bold"></i> Self-scoring rubrics, weak-area tracker &amp; reminders
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="lu-card p-4 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="lu-square-tile-sm">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <div>
+                            <span class="lu-pill-soft mb-1">For Instructors</span>
+                            <h4 class="fw-bold text-dark mb-0">Instructor Portal</h4>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-3">
+                        Coordinate classroom oral defenses, publish public study decks for your sections, and evaluate performance using structured criteria.
+                    </p>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="lu-ink-card px-3 py-2 small d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle fw-bold"></i> Publish shareable recitation decks to any class section
+                        </div>
+                        <div class="lu-ink-card px-3 py-2 small d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle fw-bold"></i> Structured oral rubric breakdown &amp; session scheduling
+                        </div>
+                        <div class="lu-ink-card px-3 py-2 small d-flex align-items-center gap-2">
+                            <i class="bi bi-check2-circle fw-bold"></i> Role-protected instructor dashboard &amp; grading logs
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

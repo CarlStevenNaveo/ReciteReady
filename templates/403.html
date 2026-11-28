@@ -1,24 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Access Denied (403) | ReciteReady{% endblock %}
+{% block title %}Access Denied (403) | recite ready{% endblock %}
 
 {% block content %}
 <div class="container py-5 text-center">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
-            <div class="card card-custom p-5 border-0 shadow-sm">
-                <span class="p-3 rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center mb-3 mx-auto" style="width: 70px; height: 70px;">
-                    <i class="bi bi-shield-x fs-1"></i>
-                </span>
-                <h2 class="fw-bold text-dark mb-2">403 - Access Denied</h2>
-                <p class="text-secondary mb-4">
-                    You do not have permission to access this resource or portal. Role-based restrictions are strictly enforced to preserve academic integrity.
-                </p>
-                <div class="d-flex justify-content-center gap-2">
-                    <a href="{% url 'role_dashboard' %}" class="btn btn-primary-custom px-4 py-2">
-                        <i class="bi bi-house-door me-1"></i> Go to My Dashboard
-                    </a>
+        <div class="col-md-7 col-lg-5">
+            <div class="lu-card p-5">
+                <div class="lu-square-tile mx-auto mb-4">
+                    <i class="bi bi-shield-lock-fill"></i>
                 </div>
+                <h2 class="fw-bold text-dark mb-2">403 — Access Denied</h2>
+                <p class="text-secondary small mb-4">
+                    You do not have permission to access this portal. Role-based permissions are enforced to protect academic sessions.
+                </p>
+                <a href="{% url 'role_dashboard' %}" class="lu-btn-black lu-btn-chevron text-decoration-none px-4">
+                    <span>Return to Dashboard</span>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
             </div>
         </div>
     </div>

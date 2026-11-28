@@ -1,42 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}Practice Reminders & Notifications | ReciteReady{% endblock %}
+{% block title %}Practice Reminders & Notifications | recite ready{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 rounded-pill">
-                    <i class="bi bi-bell-fill me-1"></i> Module: Notifications
-                </span>
-                <span class="text-muted small">Recitation Habits & Practice Reminders</span>
+<div class="container py-3">
+    <!-- Monochrome Header -->
+    <div class="lu-card mb-4">
+        <div class="lu-dark-curved-top p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <div class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">
+                    Module: Notifications &amp; Habits
+                </div>
+                <h2 class="fw-bold text-white mb-0">Practice Reminders &amp; Alerts</h2>
+                <p class="text-white-50 small mb-0">Schedule daily or weekly recitation drills so practice stays consistent.</p>
             </div>
-            <h2 class="fw-bold text-dark mb-0">Practice Reminders & Alerts</h2>
-            <p class="text-secondary small mb-0">Configure daily or weekly practice reminders so you consistently review your recitation prompts.</p>
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" name="send_test_notification" class="lu-btn-white btn-sm px-3 py-2">
+                    <i class="bi bi-send me-1"></i> Send Test Reminder
+                </button>
+            </form>
         </div>
-        <form method="post" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" name="send_test_notification" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-send me-1"></i> Send Test Reminder
-            </button>
-        </form>
     </div>
 
     <div class="row g-4">
-        <!-- Add New Reminder Card -->
-        <div class="col-lg-5">
-            <div class="card card-custom border-0 p-4 shadow-sm bg-white mb-4">
-                <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-alarm text-primary"></i> Set New Reminder
-                </h5>
+        <!-- Left: Create & Manage Schedules -->
+        <div class="col-lg-5 d-flex flex-column gap-4">
+            <div class="lu-card p-4">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="lu-square-tile-sm"><i class="bi bi-alarm"></i></div>
+                    <h5 class="fw-bold text-dark mb-0">Set New Reminder</h5>
+                </div>
 
                 <form method="post">
                     {% csrf_token %}
 
                     <div class="mb-3">
-                        <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold text-dark small">
+                        <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold small text-dark">
                             Reminder Label
                         </label>
                         {{ form.title }}
@@ -46,7 +46,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="{{ form.reminder_time.id_for_label }}" class="form-label fw-semibold text-dark small">
+                        <label for="{{ form.reminder_time.id_for_label }}" class="form-label fw-semibold small text-dark">
                             Target Practice Time
                         </label>
                         {{ form.reminder_time }}
@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="{{ form.days_of_week.id_for_label }}" class="form-label fw-semibold text-dark small">
+                        <label for="{{ form.days_of_week.id_for_label }}" class="form-label fw-semibold small text-dark">
                             Active Days
                         </label>
                         {{ form.days_of_week }}
@@ -68,39 +68,37 @@
 
                     <div class="mb-4 form-check form-switch">
                         {{ form.is_active }}
-                        <label class="form-check-label fw-semibold text-dark small" for="{{ form.is_active.id_for_label }}">
+                        <label class="form-check-label fw-semibold small text-dark" for="{{ form.is_active.id_for_label }}">
                             Enable Reminder Alert
                         </label>
                     </div>
 
-                    <button type="submit" name="create_reminder" class="btn btn-primary-custom w-100 py-2">
-                        <i class="bi bi-plus-circle me-1"></i> Save Reminder Schedule
+                    <button type="submit" name="create_reminder" class="lu-btn-black w-100 py-2">
+                        Save Reminder Schedule
                     </button>
                 </form>
             </div>
 
-            <!-- Existing Schedules List -->
-            <div class="card card-custom border-0 p-4 shadow-sm bg-white">
-                <h5 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-calendar-check text-success"></i> Configured Schedules
-                    <span class="badge bg-secondary-subtle text-secondary fs-6">{{ reminders.count }}</span>
-                </h5>
+            <!-- Configured Schedules -->
+            <div class="lu-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-dark mb-0">Configured Schedules</h5>
+                    <span class="lu-pill-dark" style="font-size: 0.72rem;">{{ reminders.count }}</span>
+                </div>
 
                 {% if reminders %}
-                    <div class="list-group list-group-flush">
+                    <div class="d-flex flex-column gap-2">
                         {% for r in reminders %}
-                            <div class="list-group-item px-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+                            <div class="lu-ink-card p-3 d-flex justify-content-between align-items-center gap-2">
                                 <div>
-                                    <div class="fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                                    <div class="fw-bold font-display text-dark d-flex align-items-center gap-2">
                                         {{ r.title }}
-                                        {% if r.is_active %}
-                                            <span class="badge bg-success-subtle text-success small rounded-pill">Active</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary-subtle text-secondary small rounded-pill">Paused</span>
-                                        {% endif %}
+                                        <span class="{% if r.is_active %}lu-pill-dark{% else %}lu-pill-soft{% endif %}" style="font-size: 0.66rem;">
+                                            {% if r.is_active %}Active{% else %}Paused{% endif %}
+                                        </span>
                                     </div>
                                     <div class="small text-muted">
-                                        <i class="bi bi-clock me-1"></i> {{ r.reminder_time|time:"g:i A" }} ({{ r.days_of_week }})
+                                        <i class="bi bi-clock me-1"></i>{{ r.reminder_time|time:"g:i A" }} ({{ r.days_of_week }})
                                     </div>
                                 </div>
 
@@ -108,15 +106,14 @@
                                     <form method="post" class="d-inline">
                                         {% csrf_token %}
                                         <input type="hidden" name="reminder_id" value="{{ r.id }}">
-                                        <button type="submit" name="toggle_reminder" class="btn btn-sm btn-outline-secondary" title="Toggle active">
+                                        <button type="submit" name="toggle_reminder" class="lu-btn-outline btn-sm px-2 py-1" title="Toggle Active">
                                             <i class="bi {% if r.is_active %}bi-pause-fill{% else %}bi-play-fill{% endif %}"></i>
                                         </button>
                                     </form>
-
                                     <form method="post" class="d-inline" onsubmit="return confirm('Delete this reminder schedule?');">
                                         {% csrf_token %}
                                         <input type="hidden" name="reminder_id" value="{{ r.id }}">
-                                        <button type="submit" name="delete_reminder" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <button type="submit" name="delete_reminder" class="lu-btn-outline btn-sm px-2 py-1" title="Delete">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -125,26 +122,26 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <p class="text-muted small mb-0 text-center py-3">No active practice schedules configured yet.</p>
+                    <p class="text-muted small text-center mb-0 py-3">No practice schedules configured yet.</p>
                 {% endif %}
             </div>
         </div>
 
-        <!-- In-App Notification Center -->
+        <!-- Right: Notification Center -->
         <div class="col-lg-7">
-            <div class="card card-custom border-0 p-4 shadow-sm bg-white">
+            <div class="lu-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                        <i class="bi bi-bell text-warning-emphasis"></i> Notification Center
+                        Notification Center
                         {% if unread_count > 0 %}
-                            <span class="badge bg-danger rounded-pill">{{ unread_count }} new</span>
+                            <span class="lu-pill-dark" style="font-size: 0.72rem;">{{ unread_count }} new</span>
                         {% endif %}
                     </h5>
 
                     {% if unread_count > 0 %}
                         <form method="post" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" name="mark_read" class="btn btn-link text-decoration-none small p-0">
+                            <button type="submit" name="mark_read" class="btn btn-link text-dark fw-semibold small text-decoration-none p-0">
                                 Mark all as read
                             </button>
                         </form>
@@ -152,12 +149,12 @@
                 </div>
 
                 {% if notifications %}
-                    <div class="list-group list-group-flush">
+                    <div class="d-flex flex-column gap-2">
                         {% for n in notifications %}
-                            <div class="list-group-item px-2 py-3 border-bottom {% if not n.is_read %}bg-light rounded-2{% endif %}">
+                            <div class="lu-ink-card p-3 {% if not n.is_read %}bg-light{% endif %}">
                                 <div class="d-flex justify-content-between align-items-start mb-1">
-                                    <div class="fw-bold text-dark d-flex align-items-center gap-2">
-                                        {% if not n.is_read %}<span class="p-1 rounded-circle bg-primary d-inline-block"></span>{% endif %}
+                                    <div class="fw-bold font-display text-dark d-flex align-items-center gap-2">
+                                        {% if not n.is_read %}<span class="rounded-circle bg-dark d-inline-block" style="width: 8px; height: 8px;"></span>{% endif %}
                                         {{ n.title }}
                                     </div>
                                     <span class="text-muted small">{{ n.created_at|timesince }} ago</span>
@@ -167,9 +164,9 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="p-5 text-center text-muted small">
-                        <i class="bi bi-bell-slash fs-2 d-block mb-2 text-muted"></i>
-                        No alerts or notifications at this time.
+                    <div class="p-5 text-center rounded-4 bg-light border text-secondary small">
+                        <i class="bi bi-bell-slash fs-2 d-block mb-2 text-dark"></i>
+                        No alerts or notifications at this time. Click "Send Test Reminder" above to preview one.
                     </div>
                 {% endif %}
             </div>

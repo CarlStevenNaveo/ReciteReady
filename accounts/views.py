@@ -186,6 +186,8 @@ def student_dashboard_view(request):
             'upcoming_recitations': total_decks,
             'overall_grade': f"{round(avg_score, 1)}%",
             'readiness_score': f"{readiness_score}%",
+            'readiness_num': readiness_score,
+            'readiness_offset': round(314 - (314 * readiness_score / 100), 1),
         },
         'latest_deck': latest_deck,
         'recent_sessions': recent_sessions,
