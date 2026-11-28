@@ -111,47 +111,35 @@ def role_dashboard_view(request):
 @role_required(['INSTRUCTOR'])
 def instructor_dashboard_view(request):
     """
-    Role-specific dashboard for Instructors:
-    - Overview of classes and recitation sessions
-    - Metrics: Total Students, Active Sessions, Pending Evaluations, Class Average
-    - Quick actions for managing recitations and rubric grading
+    Role-specific dashboard for Instructors backed by live PostgreSQL/Supabase data:
+    - Real counts of registered students, authored decks, completed student drills, and class average
+    - Live list of instructor's recitation decks with share codes and question counts
+    - Live feed of recent student recitation practice evaluations
     """
+    from .models import User
+    from recitations.models import Deck, PracticeSession, Question
+    from django.db.models import Avg
+
+    total_students = User.objects.filter(role='STUDENT').count()
+    instructor_decks = Deck.objects.filter(owner=request.user).order_by('-created_at')
+    total_questions_authored = Question.objects.filter(deck__owner=request.user).count()
+
+    completed_sessions = PracticeSession.objects.filter(status='COMPLETED').select_related('user', 'deck').order_by('-completed_at')
+    total_completed_sessions = completed_sessions.count()
+    avg_score = completed_sessions.aggregate(Avg('score_percentage'))['score_percentage__avg']
+    class_average = f"{round(avg_score, 1)}%" if avg_score is not None else "0.0%"
+
     context = {
         'role_title': 'Instructor Portal',
         'stats': {
-            'total_students': 48,
-            'active_sessions': 3,
-            'pending_evaluations': 7,
-            'class_average': '88.5%',
+            'total_students': total_students,
+            'active_decks': instructor_decks.count(),
+            'total_questions': total_questions_authored,
+            'completed_sessions': total_completed_sessions,
+            'class_average': class_average,
         },
-        'upcoming_sessions': [
-            {
-                'title': 'Database Normalization & 3NF Defense',
-                'section': 'CS301 - Section A',
-                'date': 'Today, 2:00 PM',
-                'students_count': 24,
-                'status': 'In Progress',
-            },
-            {
-                'title': 'Object-Oriented Design Patterns',
-                'section': 'CS202 - Section B',
-                'date': 'Tomorrow, 10:00 AM',
-                'students_count': 22,
-                'status': 'Scheduled',
-            },
-            {
-                'title': 'Software Architecture & Microservices',
-                'section': 'CS401 - Section A',
-                'date': 'Friday, 1:30 PM',
-                'students_count': 18,
-                'status': 'Draft',
-            },
-        ],
-        'recent_recitations': [
-            {'student': 'John Smith', 'topic': 'B-Tree Indexing', 'score': '95/100', 'status': 'Graded'},
-            {'student': 'Emily Davis', 'topic': 'Relational Algebra', 'score': '88/100', 'status': 'Graded'},
-            {'student': 'Mark Wilson', 'topic': 'ACID Properties', 'score': 'Pending', 'status': 'Needs Review'},
-        ]
+        'instructor_decks': instructor_decks[:6],
+        'recent_recitations': completed_sessions[:6],
     }
     return render(request, 'accounts/instructor_dashboard.html', context)
 
