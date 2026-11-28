@@ -419,8 +419,12 @@ def practice_results_view(request, session_id):
     """
     Scoring & Attempt Summary:
     Calculates final recitation grade, lists mastered vs weak questions, and allows retry.
+    Students can only view their own attempts; Instructors/staff can review student attempts.
     """
-    practice_session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
+    if request.user.role == 'INSTRUCTOR' or request.user.is_staff:
+        practice_session = get_object_or_404(PracticeSession, id=session_id)
+    else:
+        practice_session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
     practice_session.calculate_score()
 
     attempts = practice_session.attempts.select_related('question').all()

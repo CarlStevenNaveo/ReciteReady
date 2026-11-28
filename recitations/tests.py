@@ -186,3 +186,45 @@ class RecitationFeaturesTestCase(TestCase):
         self.assertRedirects(pwd_resp, reverse('account_settings'))
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password('NewSecurePassword456#'))
+
+    def test_instructor_dashboard_live_data_and_role_access(self):
+        """Instructor dashboard displays live DB stats and instructors can review student attempts."""
+        instructor = User.objects.create_user(
+            username='prof_recite',
+            email='prof@example.com',
+            password='TestPassword123!',
+            role='INSTRUCTOR',
+            first_name='Maria',
+            last_name='Santos'
+        )
+        session = PracticeSession.objects.create(
+            user=self.user,
+            deck=self.deck,
+            status='COMPLETED',
+            total_questions=1,
+            completed_questions=1,
+            mastered_count=1,
+            score_percentage=100.0
+        )
+        PracticeAttempt.objects.create(
+            session=session,
+            question=self.q_easy,
+            user_answer='Atomic values',
+            self_rating='MASTERED',
+            time_spent_seconds=12
+        )
+
+        # Instructor can view live dashboard and inspect student's practice results
+        self.client.force_login(instructor)
+        dash_resp = self.client.get(reverse('instructor_dashboard'))
+        self.assertEqual(dash_resp.status_code, 200)
+        self.assertContains(dash_resp, 'Carl Naveo')
+        self.assertContains(dash_resp, '100%')
+
+        results_resp = self.client.get(reverse('practice_results', args=[session.id]))
+        self.assertEqual(results_resp.status_code, 200)
+
+        # Another student cannot view Carl's private practice results
+        self.client.force_login(self.other_user)
+        blocked_resp = self.client.get(reverse('practice_results', args=[session.id]))
+        self.assertEqual(blocked_resp.status_code, 404)

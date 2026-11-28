@@ -17,7 +17,7 @@
                         </div>
                     {% endif %}
                     <div>
-                        <span class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">Instructor Portal &bull; AY 2026-2027</span>
+                        <span class="small text-white-50 text-uppercase fw-semibold" style="letter-spacing: 0.08em;">Instructor Portal &bull; Live Data</span>
                         <h2 class="fw-bold text-white mb-0">
                             Welcome back, {% if user.first_name %}Prof. {{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}
                         </h2>
@@ -25,11 +25,11 @@
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{% url 'deck_create' %}" class="lu-btn-white text-decoration-none btn-sm px-3 py-2">
-                        <i class="bi bi-stack me-1"></i> Create Deck
+                        <i class="bi bi-plus-lg me-1"></i> Create Deck
                     </a>
-                    <button class="btn btn-sm px-3 py-2 text-white fw-semibold" style="border: 1.5px solid rgba(255,255,255,0.45); border-radius: 12px; font-family: 'Jost', sans-serif;" data-bs-toggle="modal" data-bs-target="#newSessionModal">
-                        <i class="bi bi-plus-circle me-1"></i> New Session
-                    </button>
+                    <a href="{% url 'deck_list' %}" class="btn btn-sm px-3 py-2 text-white fw-semibold" style="border: 1.5px solid rgba(255,255,255,0.45); border-radius: 12px; font-family: 'Jost', sans-serif;">
+                        <i class="bi bi-stack me-1"></i> Question Bank
+                    </a>
                 </div>
             </div>
         </div>
@@ -39,9 +39,9 @@
             <div class="lu-seam-pill flex-wrap justify-content-center">
                 <span><i class="bi bi-people-fill me-1"></i> {{ stats.total_students }} Students</span>
                 <span class="text-muted">&bull;</span>
-                <span><i class="bi bi-play-circle-fill me-1"></i> {{ stats.active_sessions }} Active Sessions</span>
+                <span><i class="bi bi-stack me-1"></i> {{ stats.active_decks }} Authored Decks</span>
                 <span class="text-muted">&bull;</span>
-                <span><i class="bi bi-clock-history me-1"></i> {{ stats.pending_evaluations }} Pending</span>
+                <span><i class="bi bi-check2-circle me-1"></i> {{ stats.completed_sessions }} Drills Logged</span>
                 <span class="text-muted">&bull;</span>
                 <span><i class="bi bi-graph-up me-1"></i> {{ stats.class_average }} Class Avg</span>
             </div>
@@ -52,25 +52,25 @@
                 <div class="col-6 col-lg-3">
                     <div class="lu-ink-card p-3 text-center">
                         <div class="fs-2 fw-bold font-display text-dark">{{ stats.total_students }}</div>
-                        <div class="small text-muted">Enrolled Students</div>
+                        <div class="small text-muted">Registered Students</div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3">
                     <div class="lu-ink-card p-3 text-center">
-                        <div class="fs-2 fw-bold font-display text-dark">{{ stats.active_sessions }}</div>
-                        <div class="small text-muted">Active Sessions</div>
+                        <div class="fs-2 fw-bold font-display text-dark">{{ stats.active_decks }}</div>
+                        <div class="small text-muted">My Question Decks</div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3">
                     <div class="lu-ink-card p-3 text-center">
-                        <div class="fs-2 fw-bold font-display text-dark">{{ stats.pending_evaluations }}</div>
-                        <div class="small text-muted">Pending Reviews</div>
+                        <div class="fs-2 fw-bold font-display text-dark">{{ stats.completed_sessions }}</div>
+                        <div class="small text-muted">Completed Drills</div>
                     </div>
                 </div>
                 <div class="col-6 col-lg-3">
                     <div class="lu-ink-card p-3 text-center">
                         <div class="fs-2 fw-bold font-display text-dark">{{ stats.class_average }}</div>
-                        <div class="small text-muted">Class Mastery</div>
+                        <div class="small text-muted">Class Mastery Avg</div>
                     </div>
                 </div>
             </div>
@@ -79,124 +79,105 @@
 
     <!-- Main Grid -->
     <div class="row g-4">
-        <!-- Scheduled Sessions (Screen 3 List Style) -->
-        <div class="col-lg-8" id="sessions">
+        <!-- Authored Recitation Decks (Live DB Records) -->
+        <div class="col-lg-7" id="sessions">
             <div class="lu-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold text-dark mb-0">Recitation Sessions</h5>
-                    <button class="lu-btn-black btn-sm px-3" data-bs-toggle="modal" data-bs-target="#newSessionModal">
-                        <i class="bi bi-plus-lg me-1"></i> Schedule
-                    </button>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">My Recitation Decks</h5>
+                        <span class="small text-muted">{{ stats.total_questions }} total questions authored</span>
+                    </div>
+                    <a href="{% url 'deck_create' %}" class="lu-btn-black btn-sm text-decoration-none px-3">
+                        <i class="bi bi-plus-lg me-1"></i> New Deck
+                    </a>
                 </div>
 
-                <div class="d-flex flex-column gap-2">
-                    {% for session in upcoming_sessions %}
-                        <div class="lu-list-row flex-wrap">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="lu-square-tile-sm" style="width: 44px; height: 44px; font-size: 1.05rem;">
-                                    <i class="bi bi-mic-fill"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark">{{ session.title }}</div>
-                                    <div class="small text-muted">
-                                        {{ session.section }} &bull; {{ session.date }} &bull; {{ session.students_count }} Candidates
+                {% if instructor_decks %}
+                    <div class="d-flex flex-column gap-2">
+                        {% for deck in instructor_decks %}
+                            <a href="{% url 'deck_detail' deck.id %}" class="lu-list-row flex-wrap">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="lu-square-tile-sm" style="width: 44px; height: 44px; font-size: 1.05rem;">
+                                        <i class="bi bi-stack"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ deck.title }}</div>
+                                        <div class="small text-muted">
+                                            {{ deck.subject|default:"General" }} &bull; {{ deck.question_count }} Questions &bull; Code: <code>{{ deck.share_code }}</code>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2 ms-auto">
-                                {% if session.status == 'In Progress' %}
-                                    <span class="lu-pill-dark"><i class="bi bi-record-fill"></i> Live</span>
-                                {% elif session.status == 'Scheduled' %}
-                                    <span class="lu-pill-outline">Scheduled</span>
-                                {% else %}
-                                    <span class="lu-pill-soft">Draft</span>
-                                {% endif %}
-                                <button class="lu-play-circle bg-white" title="Open Grading Sheet" onclick="alert('Grading sheet for {{ session.title }} will open during active defense.')">
-                                    <i class="bi bi-pencil-square" style="font-size: 0.8rem;"></i>
-                                </button>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                                <div class="d-flex align-items-center gap-2 ms-auto">
+                                    <span class="{% if deck.is_public %}lu-pill-dark{% else %}lu-pill-soft{% endif %}" style="font-size: 0.72rem;">
+                                        {% if deck.is_public %}Public{% else %}Private{% endif %}
+                                    </span>
+                                    <span class="lu-play-circle"><i class="bi bi-play-fill"></i></span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center rounded-4 bg-light border">
+                        <i class="bi bi-stack fs-3 d-block mb-2 text-dark"></i>
+                        <div class="fw-bold text-dark small mb-1">No decks created yet</div>
+                        <p class="small text-secondary mb-3">Create a public recitation deck and share its code with your students.</p>
+                        <a href="{% url 'deck_create' %}" class="lu-btn-black btn-sm text-decoration-none px-3">Create First Deck</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
-        <!-- Recent Evaluations & Rubric -->
-        <div class="col-lg-4" id="grading">
+        <!-- Recent Student Practice Evaluations (Live DB Records) -->
+        <div class="col-lg-5" id="grading">
             <div class="lu-card p-4 mb-4">
-                <h5 class="fw-bold text-dark mb-3">Recent Evaluations</h5>
-                <div class="d-flex flex-column gap-2">
-                    {% for item in recent_recitations %}
-                        <div class="lu-ink-card p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-dark font-display">{{ item.student }}</span>
-                                <span class="{% if item.status == 'Graded' %}lu-pill-dark{% else %}lu-pill-outline{% endif %}" style="font-size: 0.72rem;">
-                                    {{ item.score }}
-                                </span>
-                            </div>
-                            <div class="small text-muted">Topic: {{ item.topic }}</div>
-                            <div class="small text-secondary">{{ item.status }}</div>
-                        </div>
-                    {% endfor %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold text-dark mb-0">Recent Student Drills</h5>
+                    <span class="lu-pill-outline" style="font-size: 0.72rem;">Live</span>
                 </div>
+
+                {% if recent_recitations %}
+                    <div class="d-flex flex-column gap-2">
+                        {% for session in recent_recitations %}
+                            <a href="{% url 'practice_results' session.id %}" class="lu-ink-card p-3 text-decoration-none text-dark d-block">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-bold text-dark font-display">
+                                        {{ session.user.get_full_name|default:session.user.username }}
+                                    </span>
+                                    <span class="{% if session.score_percentage >= 75 %}lu-pill-dark{% else %}lu-pill-outline{% endif %}" style="font-size: 0.72rem;">
+                                        {{ session.score_percentage|floatformat:0 }}%
+                                    </span>
+                                </div>
+                                <div class="small text-muted">Deck: {{ session.deck.title }}</div>
+                                <div class="small text-secondary">
+                                    {{ session.mastered_count }}/{{ session.completed_questions }} Mastered &bull; {{ session.completed_at|date:"M d, Y" }}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center rounded-4 bg-light border small text-secondary">
+                        No completed student practice sessions recorded yet.
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Dark Rubric Summary Card -->
             <div class="lu-dark-hero p-4">
                 <div class="fw-bold font-display text-white mb-2">
-                    <i class="bi bi-sliders2 me-1"></i> Standard Oral Rubric
+                    <i class="bi bi-sliders2 me-1"></i> Standard Recitation Rubric
                 </div>
-                <p class="small text-white-50 mb-3">Evaluations are weighted across four defense dimensions:</p>
+                <p class="small text-white-50 mb-3">Self-evaluation weights used across timed drills:</p>
                 <div class="d-flex flex-column gap-2 small">
                     <div class="d-flex justify-content-between text-white border-bottom border-secondary pb-1">
-                        <span>Technical Mastery</span><strong>40%</strong>
+                        <span>Mastered (Accurate &amp; Confident)</span><strong>100%</strong>
                     </div>
                     <div class="d-flex justify-content-between text-white border-bottom border-secondary pb-1">
-                        <span>Communication Clarity</span><strong>30%</strong>
-                    </div>
-                    <div class="d-flex justify-content-between text-white border-bottom border-secondary pb-1">
-                        <span>Defense Argumentation</span><strong>20%</strong>
+                        <span>Partially Correct (Main Points)</span><strong>50%</strong>
                     </div>
                     <div class="d-flex justify-content-between text-white">
-                        <span>Composure &amp; Timing</span><strong>10%</strong>
+                        <span>Needs Practice (Flagged for Review)</span><strong>0%</strong>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for New Session Simulation -->
-<div class="modal fade" id="newSessionModal" tabindex="-1" aria-labelledby="newSessionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content lu-card border-0">
-            <div class="modal-header bg-dark text-white border-0 px-4 py-3">
-                <h5 class="modal-title fw-bold font-display" id="newSessionModalLabel">
-                    Schedule Recitation Session
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold small">Session Title</label>
-                    <input type="text" class="form-control" placeholder="e.g. Relational Calculus & SQL Optimization">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-semibold small">Class Section</label>
-                    <select class="form-select">
-                        <option>CS301 - Section A (MWF 2:00 PM)</option>
-                        <option>CS202 - Section B (TTH 10:00 AM)</option>
-                        <option>CS401 - Section A (F 1:30 PM)</option>
-                    </select>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-semibold small">Defense Date &amp; Time</label>
-                    <input type="datetime-local" class="form-control">
-                </div>
-            </div>
-            <div class="modal-footer border-top px-4 py-3">
-                <button type="button" class="lu-btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="lu-btn-black btn-sm" data-bs-dismiss="modal" onclick="alert('Session scheduled successfully!')">Save Session</button>
             </div>
         </div>
     </div>
